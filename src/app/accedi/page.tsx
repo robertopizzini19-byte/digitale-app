@@ -3,23 +3,7 @@
 import Link from "next/link";
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-
-function BrandLogo() {
-  return (
-    <span className="inline-flex flex-col select-none" aria-label="DigITAle">
-      <span className="inline-flex items-baseline brand-ita brand-ita--dark">
-        <span className="text-[2rem] font-medium text-[#0f172a] tracking-tight leading-none">Dig</span>
-        <span className="text-[2.6rem] font-extrabold tracking-[-0.02em] leading-none">
-          <span className="brand-I">I</span>
-          <span className="brand-T">T</span>
-          <span className="brand-A">A</span>
-        </span>
-        <span className="text-[1.75rem] font-light text-[#0f172a] tracking-[0.08em] leading-none">le</span>
-      </span>
-      <span className="brand-underline h-[2.5px] mt-[3px] rounded-full" style={{ width: "100%" }} />
-    </span>
-  );
-}
+import { BrandLogo } from "@/components/BrandLogo";
 
 export default function AccediPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +22,7 @@ export default function AccediPage() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <Link href="/">
-              <BrandLogo />
+              <BrandLogo size="lg" />
             </Link>
           </div>
 
@@ -135,7 +119,7 @@ export default function AccediPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-[#94a3b8] mt-6">
-          &copy; 2025 DigITAle &mdash; Fatto in Italia, per l&apos;Italia
+          &copy; 2026 DigITAle &mdash; Fatto in Italia, per l&apos;Italia
         </p>
       </div>
     </div>
