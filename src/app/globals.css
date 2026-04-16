@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+:root {
+  /* Italian Patriotic Palette */
+  --verde: #009246;
+  --verde-dark: #007a3a;
+  --verde-light: #00b359;
+  --bianco: #F5F5F5;
+  --rosso: #CE2B37;
+  --rosso-dark: #a8222c;
+  --rosso-light: #e0424e;
+
+  /* Primary */
+  --primary: #009246;
+  --primary-dark: #007a3a;
+  --primary-light: #00b359;
+
+  /* Dark tones */
+  --dark: #0f172a;
+  --dark-soft: #1e293b;
+  --dark-lighter: #334155;
+
+  /* Neutrals */
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+
+  /* Semantic */
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+
+  /* Success / Warning / Error */
+  --success: #16a34a;
+  --warning: #d97706;
+  --error: #dc2626;
+  --info: #2563eb;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-verde: var(--verde);
+  --color-verde-dark: var(--verde-dark);
+  --color-verde-light: var(--verde-light);
+  --color-rosso: var(--rosso);
+  --color-rosso-dark: var(--rosso-dark);
+  --color-rosso-light: var(--rosso-light);
+  --color-bianco: var(--bianco);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-dark: var(--dark);
+  --color-dark-soft: var(--dark-soft);
+  --color-dark-lighter: var(--dark-lighter);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
+  --font-sans: var(--font-inter);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+/* Tricolor bar */
+.tricolor-bar {
+  background: linear-gradient(
+    to right,
+    var(--verde) 0%,
+    var(--verde) 33.33%,
+    var(--bianco) 33.33%,
+    var(--bianco) 66.66%,
+    var(--rosso) 66.66%,
+    var(--rosso) 100%
+  );
+  height: 3px;
+  width: 100%;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Button primary */
+.btn-primary {
+  background-color: var(--verde);
+  color: white;
+  transition: all 0.2s ease;
+}
+.btn-primary:hover {
+  background-color: var(--verde-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 146, 70, 0.3);
+}
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Gradient text utility */
+.text-gradient-italia {
+  background: linear-gradient(135deg, var(--verde), var(--verde-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Brand Logo — DigITAle letter-level tricolore */
+.brand-ita {
+  display: inline-flex;
+  align-items: baseline;
+  letter-spacing: -0.02em;
+}
+.brand-ita .brand-I { color: #009246; }
+.brand-ita .brand-T { color: #FAFAFA; text-shadow: 0 0 1px rgba(0,0,0,0.15); }
+.brand-ita .brand-A { color: #CE2B37; }
+
+/* On light backgrounds, the white T needs a subtle outline */
+.brand-ita--dark .brand-T {
+  color: #e8e8e8;
+  text-shadow: 0 0 0.5px rgba(0,0,0,0.25), 0 0.5px 1px rgba(0,0,0,0.08);
+}
+
+/* On dark backgrounds, white T is clean */
+.brand-ita--light .brand-T {
+  color: #FAFAFA;
+  text-shadow: none;
+}
+
+/* Underline accent bar beneath ITA */
+.brand-underline {
+  display: block;
+  height: 2px;
+  margin-top: 2px;
+  border-radius: 1px;
+  background: linear-gradient(to right, #009246 33%, #F5F5F5 33%, #F5F5F5 66%, #CE2B37 66%);
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Animated gradient border */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer-border {
+  background: linear-gradient(90deg, var(--verde), var(--bianco), var(--rosso), var(--verde));
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Pulse glow for voice button */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 146, 70, 0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(0, 146, 70, 0); }
+}
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Card hover lift */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}
