@@ -512,7 +512,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="max-w-[85%]">
                       <div className="bg-gray-50 text-[#0f172a] px-4 py-3 rounded-2xl rounded-tl-md text-[13px] leading-relaxed">
-                        <p>Fattura <span className="font-bold">#2024-047</span> creata per <span className="font-bold">Mario Rossi</span></p>
+                        <p>Fattura <span className="font-bold">#2026-047</span> creata per <span className="font-bold">Mario Rossi</span></p>
                         <div className="mt-2 p-2.5 bg-white rounded-xl border border-gray-100 space-y-1">
                           <div className="flex justify-between text-xs">
                             <span className="text-gray-500">Imponibile</span>

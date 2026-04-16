@@ -53,7 +53,10 @@ function Navbar() {
             </Link>
 
             {/* Desktop links */}
-            <div className="hidden lg:flex items-center gap-10">
+            <div className="hidden lg:flex items-center gap-9">
+              <a href="#manifesto" className="text-[15px] font-medium text-muted hover:text-dark transition-colors">
+                Manifesto
+              </a>
               <a href="#come-funziona" className="text-[15px] font-medium text-muted hover:text-dark transition-colors">
                 Come Funziona
               </a>
@@ -99,6 +102,7 @@ function Navbar() {
         {open && (
           <div className="lg:hidden border-t border-border/60 bg-white">
             <div className="flex flex-col px-5 py-4 gap-1">
+              <a href="#manifesto" onClick={() => setOpen(false)} className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Manifesto</a>
               <a href="#come-funziona" onClick={() => setOpen(false)} className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Come Funziona</a>
               <a href="#per-chi" onClick={() => setOpen(false)} className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Per Chi</a>
               <a href="#prezzi" onClick={() => setOpen(false)} className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Prezzi</a>
@@ -144,40 +148,61 @@ function Footer() {
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Prodotto</h4>
             <ul className="space-y-2.5">
+              <li><a href="#manifesto" className="text-sm text-gray-300 hover:text-verde transition-colors">Manifesto</a></li>
               <li><a href="#come-funziona" className="text-sm text-gray-300 hover:text-verde transition-colors">Come Funziona</a></li>
               <li><a href="#prezzi" className="text-sm text-gray-300 hover:text-verde transition-colors">Prezzi</a></li>
               <li><a href="#per-chi" className="text-sm text-gray-300 hover:text-verde transition-colors">Per Chi</a></li>
-              <li><Link href="/dashboard" className="text-sm text-gray-300 hover:text-verde transition-colors">Demo Dashboard</Link></li>
+              <li><Link href="/dashboard" className="text-sm text-gray-300 hover:text-verde transition-colors">Anteprima Dashboard</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Risorse</h4>
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Contatti</h4>
             <ul className="space-y-2.5">
-              <li><a href="#" className="text-sm text-gray-300 hover:text-verde transition-colors">Documentazione</a></li>
-              <li><a href="#" className="text-sm text-gray-300 hover:text-verde transition-colors">Blog</a></li>
-              <li><a href="#" className="text-sm text-gray-300 hover:text-verde transition-colors">Assistenza</a></li>
-              <li><a href="#" className="text-sm text-gray-300 hover:text-verde transition-colors">Stato del Servizio</a></li>
+              <li className="text-sm text-gray-300">
+                <span className="block text-gray-500 text-xs mb-0.5">Scrivici</span>
+                <a href="mailto:ciao@digitale.it" className="hover:text-verde transition-colors">ciao@digitale.it</a>
+              </li>
+              <li className="text-sm text-gray-300">
+                <span className="block text-gray-500 text-xs mb-0.5">Parlaci</span>
+                <span className="text-gray-400">Linea diretta al lancio 2026</span>
+              </li>
+              <li className="text-sm text-gray-300">
+                <span className="block text-gray-500 text-xs mb-0.5">Lavora con noi</span>
+                <a href="mailto:team@digitale.it" className="hover:text-verde transition-colors">team@digitale.it</a>
+              </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Legale</h4>
-            <ul className="space-y-2.5">
-              <li><a href="#" className="text-sm text-gray-300 hover:text-verde transition-colors">Privacy</a></li>
-              <li><a href="#" className="text-sm text-gray-300 hover:text-verde transition-colors">Termini di Servizio</a></li>
-              <li><a href="#" className="text-sm text-gray-300 hover:text-verde transition-colors">Cookie</a></li>
-              <li><a href="#" className="text-sm text-gray-300 hover:text-verde transition-colors">GDPR</a></li>
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Trasparenza</h4>
+            <ul className="space-y-2.5 text-sm text-gray-300">
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-verde mt-1.5 shrink-0" />
+                <span>Privacy e GDPR: in pubblicazione al lancio</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-verde mt-1.5 shrink-0" />
+                <span>Server e dati interamente in Italia</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-verde mt-1.5 shrink-0" />
+                <span>Codice open-source in arrivo</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-verde mt-1.5 shrink-0" />
+                <span>Piano gratuito senza scadenza</span>
+              </li>
             </ul>
           </div>
         </div>
 
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500">
-            &copy; 2026 DigiITAle &mdash; Fatto in Italia, per l&apos;Italia. Tutti i diritti riservati.
+            &copy; 2026 DigiITAle &mdash; Fatto in Italia, per l&apos;Italia.
           </p>
           <p className="text-xs text-gray-600">
-            P.IVA IT00000000000 &middot; Sede: Italia
+            In forge verso il primo lancio pubblico &middot; Niente segreti, niente fretta.
           </p>
         </div>
       </div>
@@ -315,6 +340,39 @@ const FEATURES_GRID = [
   { icon: Play, title: "Automatico", desc: "Scadenze, promemoria, report: tutto da solo" },
 ];
 
+const MANIFESTO = [
+  {
+    icon: Heart,
+    num: "I.",
+    title: "Nessuno resta indietro",
+    desc: "Se un artigiano di sessant'anni non riesce a usarci, abbiamo sbagliato noi, non lui. Tutto è pensato per chi è stato dimenticato dalla tecnologia.",
+  },
+  {
+    icon: MessageCircle,
+    num: "II.",
+    title: "Parli come mangi",
+    desc: "Italiano naturale. Niente inglesismi, niente termini tecnici. Scrivi o parli come faresti con un amico di famiglia, il resto lo facciamo noi.",
+  },
+  {
+    icon: Lock,
+    num: "III.",
+    title: "I tuoi dati vivono in Italia",
+    desc: "Server italiani, leggi italiane, sovranità vera. Nessun dato attraversa l'oceano. Quello che crei qui, resta qui.",
+  },
+  {
+    icon: BadgeEuro,
+    num: "IV.",
+    title: "Prezzi da artigiano, non da multinazionale",
+    desc: "Il piano base è gratis. Per sempre. Se un giorno avrai bisogno di più, pagherai solo quello che ti serve. Niente trappole, niente vincoli.",
+  },
+  {
+    icon: Users,
+    num: "V.",
+    title: "Costruito con te, non per te",
+    desc: "Ogni funzione nasce da una richiesta vera di un italiano vero. Il tuo feedback non finisce in un modulo: diventa codice la settimana dopo.",
+  },
+];
+
 /* ================================================================== */
 /*  PAGE                                                               */
 /* ================================================================== */
@@ -340,17 +398,20 @@ export default function Home() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-verde/10 text-verde text-sm font-semibold mb-8">
                 <span className="w-2 h-2 rounded-full bg-verde animate-pulse" />
-                Lo standard digitale italiano
+                In forge · Primo lancio pubblico 2026
               </div>
 
-              <h1 className="text-[2.75rem] sm:text-5xl lg:text-6xl xl:text-[4rem] font-extrabold text-dark leading-[1.1] tracking-tight mb-6">
-                Il Digitale{" "}
-                <span className="text-gradient-italia">degli Italiani</span>
+              <h1 className="text-[2.75rem] sm:text-5xl lg:text-6xl xl:text-[4rem] font-extrabold text-dark leading-[1.05] tracking-tight mb-6">
+                Sei italiano.<br />
+                Meriti un digitale{" "}
+                <span className="text-gradient-italia">fatto per te</span>.
               </h1>
 
-              <p className="text-lg sm:text-xl text-muted leading-relaxed mb-10 max-w-lg mx-auto lg:mx-0">
-                Un&apos;unica piattaforma per fatture, documenti, clienti e burocrazia.
-                Parli in italiano, DigiITAle fa il resto.
+              <p className="text-lg sm:text-xl text-muted leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0">
+                Fatture, tasse, SPID, PEC, documenti, scadenze.
+                Li gestisci parlando. In italiano. Come parli a un amico.
+                <br className="hidden sm:block" />
+                <span className="text-dark font-semibold">Anche se di tecnologia non capisci niente.</span>
               </p>
 
               <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
@@ -358,35 +419,29 @@ export default function Home() {
                   href="/dashboard"
                   className="btn-primary inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl text-base font-bold shadow-xl shadow-verde/20 w-full sm:w-auto justify-center"
                 >
-                  Prova la Demo
+                  Vedi Come Funziona
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <a
-                  href="#come-funziona"
+                  href="#manifesto"
                   className="inline-flex items-center gap-2.5 px-8 py-4 rounded-2xl text-base font-semibold text-dark border-2 border-gray-200 hover:border-verde/40 transition-all w-full sm:w-auto justify-center"
                 >
                   <Play className="w-4 h-4 text-verde" />
-                  Scopri Come Funziona
+                  Il Nostro Manifesto
                 </a>
               </div>
 
-              {/* Social proof */}
-              <div className="flex items-center gap-6 mt-10 justify-center lg:justify-start">
-                <div className="flex -space-x-2">
-                  {["RP", "MR", "LB", "GC", "AF"].map((initials, i) => (
-                    <div
-                      key={i}
-                      className="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center text-[11px] font-bold text-white"
-                      style={{ backgroundColor: ["#009246", "#CE2B37", "#2563eb", "#d97706", "#7c3aed"][i], zIndex: 5 - i }}
-                    >
-                      {initials}
-                    </div>
-                  ))}
+              {/* Honest proof */}
+              <div className="flex items-center gap-4 mt-10 justify-center lg:justify-start">
+                <div className="flex w-12 h-1.5 rounded-full overflow-hidden shrink-0">
+                  <div className="flex-1 bg-verde" />
+                  <div className="flex-1 bg-bianco border-y border-gray-200" />
+                  <div className="flex-1 bg-rosso" />
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-dark">2.400+ iscritti</p>
-                  <p className="text-xs text-muted">alla lista d&apos;attesa</p>
-                </div>
+                <p className="text-sm text-muted leading-snug">
+                  <span className="font-semibold text-dark">Fatto in Italia, per l&apos;Italia.</span><br />
+                  Dati sui server italiani. Codice verificabile.
+                </p>
               </div>
             </div>
 
@@ -412,31 +467,35 @@ export default function Home() {
                         <Mic className="w-5 h-5 text-verde" />
                       </div>
                       <div className="bg-gray-50 rounded-2xl rounded-tl-md px-4 py-3 text-sm text-dark">
-                        &ldquo;Crea una fattura per Mario Rossi, 500 euro per consulenza web&rdquo;
+                        &ldquo;Dimmi cosa devo pagare questo mese e quando scadono le bollette&rdquo;
                       </div>
                     </div>
                     <div className="flex items-start gap-3 justify-end">
                       <div className="bg-verde/10 rounded-2xl rounded-tr-md px-4 py-3 text-sm text-dark">
-                        <p className="font-semibold">Fattura #2024-047 creata</p>
-                        <p className="text-muted text-xs mt-1">Mario Rossi &middot; €500 + IVA &middot; Pronta per l&apos;invio</p>
+                        <p className="font-semibold">Ecco il tuo mese</p>
+                        <ul className="text-xs text-muted mt-1.5 space-y-1 text-left">
+                          <li>&middot; IVA trimestrale &mdash; 16 maggio</li>
+                          <li>&middot; Luce Enel &mdash; 22 aprile &middot; €78</li>
+                          <li>&middot; F24 contributi &mdash; 30 maggio</li>
+                        </ul>
                       </div>
                       <div className="w-10 h-10 rounded-xl bg-verde flex items-center justify-center shrink-0">
                         <Sparkles className="w-5 h-5 text-white" />
                       </div>
                     </div>
-                    {/* Stats mini */}
+                    {/* Stats mini — honest copy */}
                     <div className="grid grid-cols-3 gap-3 pt-2">
                       <div className="bg-gray-50 rounded-xl p-3 text-center">
-                        <p className="text-lg font-bold text-dark">€4.250</p>
-                        <p className="text-[10px] text-muted">Fatturato</p>
+                        <p className="text-lg font-bold text-dark">3</p>
+                        <p className="text-[10px] text-muted">Scadenze</p>
                       </div>
                       <div className="bg-gray-50 rounded-xl p-3 text-center">
-                        <p className="text-lg font-bold text-verde">+12%</p>
-                        <p className="text-[10px] text-muted">Crescita</p>
+                        <p className="text-lg font-bold text-verde">12s</p>
+                        <p className="text-[10px] text-muted">Tempo risposta</p>
                       </div>
                       <div className="bg-gray-50 rounded-xl p-3 text-center">
-                        <p className="text-lg font-bold text-dark">18</p>
-                        <p className="text-[10px] text-muted">Clienti</p>
+                        <p className="text-lg font-bold text-dark">0€</p>
+                        <p className="text-[10px] text-muted">Costo base</p>
                       </div>
                     </div>
                   </div>
@@ -481,6 +540,75 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== MANIFESTO ===== */}
+      <section id="manifesto" className="relative bg-white py-24 md:py-32 overflow-hidden">
+        {/* Tricolor accents */}
+        <div className="absolute top-0 left-0 w-full h-1 flex">
+          <div className="flex-1 bg-verde" />
+          <div className="flex-1 bg-bianco" />
+          <div className="flex-1 bg-rosso" />
+        </div>
+        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-verde/[0.025] blur-3xl pointer-events-none" />
+
+        <div className="relative max-w-5xl mx-auto px-5 sm:px-8">
+          <div className="text-center mb-20">
+            <span className="inline-block text-sm font-bold tracking-[0.25em] uppercase text-verde mb-5">Il Manifesto</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-[3.25rem] font-extrabold text-dark mb-6 leading-[1.1]">
+              Cinque promesse<br className="sm:hidden" />
+              <span className="hidden sm:inline"> </span>
+              <span className="text-gradient-italia">che manterremo sempre</span>
+            </h2>
+            <p className="max-w-2xl mx-auto text-lg text-muted leading-relaxed">
+              Non sono regole di marketing. Sono i pilastri che definiscono chi siamo.
+              Se li rompiamo, non siamo più DigiITAle.
+            </p>
+          </div>
+
+          <div className="space-y-5">
+            {MANIFESTO.map((m, i) => (
+              <div
+                key={m.num}
+                className="group flex items-start gap-5 sm:gap-7 p-6 sm:p-8 rounded-3xl border border-gray-100 bg-white hover:border-verde/30 hover:shadow-xl hover:shadow-verde/5 transition-all duration-300"
+              >
+                <div className="shrink-0">
+                  <div className="relative">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-verde/8 flex items-center justify-center group-hover:bg-verde group-hover:shadow-lg group-hover:shadow-verde/30 transition-all duration-300">
+                      <m.icon className="w-7 h-7 sm:w-8 sm:h-8 text-verde group-hover:text-white transition-colors" />
+                    </div>
+                    <span className="absolute -top-1.5 -left-1.5 bg-dark text-white text-[10px] font-bold px-2 py-0.5 rounded-md tracking-wider">
+                      {m.num}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex-1 min-w-0 pt-1">
+                  <h3 className="text-xl sm:text-2xl font-bold text-dark mb-2 leading-tight">
+                    {m.title}
+                  </h3>
+                  <p className="text-base text-muted leading-relaxed">
+                    {m.desc}
+                  </p>
+                </div>
+                <div className="hidden sm:flex shrink-0 items-center justify-center w-10 h-10 rounded-full bg-gray-50 text-muted text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                  {String(i + 1).padStart(2, "0")}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Signature */}
+          <div className="mt-16 text-center">
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gray-50 border border-gray-100">
+              <div className="flex w-8 h-1 rounded-full overflow-hidden">
+                <div className="flex-1 bg-verde" />
+                <div className="flex-1 bg-bianco border-y border-gray-200" />
+                <div className="flex-1 bg-rosso" />
+              </div>
+              <span className="text-sm font-medium text-muted">Firmato dal team DigiITAle &middot; Italia, 2026</span>
+            </div>
           </div>
         </div>
       </section>
