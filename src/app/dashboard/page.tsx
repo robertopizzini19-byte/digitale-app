@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth/provider";
+import { supabaseConfigured } from "@/lib/supabase/client";
 import {
   Search,
   Bell,
@@ -99,9 +102,52 @@ import { BrandLogo } from "@/components/BrandLogo";
 
 /* ─────────────────────── COMPONENT ─────────────────────── */
 
+const PIANO_LABEL: Record<string, string> = {
+  gratuito: "Piano Gratuito",
+  professionista: "Piano Professionista",
+  impresa: "Piano Impresa",
+};
+
 export default function DashboardPage() {
+  const router = useRouter();
+  const auth = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceActive, setVoiceActive] = useState(false);
+
+  // Guard: redirect a /accedi se Supabase è configurato ma non sei autenticato
+  useEffect(() => {
+    if (auth.stato === "non_autenticato") router.replace("/accedi");
+  }, [auth.stato, router]);
+
+  // Derived: nome/cognome/piano dal DB utenti, con fallback demo
+  const nome = auth.stato === "autenticato" ? auth.user.nome || "amico" : "Roberto";
+  const cognome = auth.stato === "autenticato" ? auth.user.cognome : "Pizzini";
+  const piano = auth.stato === "autenticato"
+    ? (PIANO_LABEL[auth.user.piano] ?? "Piano Gratuito")
+    : "Piano Professionista (demo)";
+  const iniziali = `${nome[0] ?? "D"}${cognome[0] ?? ""}`.toUpperCase();
+
+  async function onLogout() {
+    await auth.esci();
+    router.replace("/accedi");
+  }
+
+  // Schermata di caricamento mentre verifichiamo la sessione
+  if (auth.stato === "caricamento") {
+    return (
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#f1f5f9]">
+        <div className="flex flex-col items-center gap-3 text-gray-500">
+          <div className="w-10 h-10 rounded-xl bg-[#009246]/10 flex items-center justify-center">
+            <div className="w-5 h-5 border-2 border-[#009246] border-t-transparent rounded-full animate-spin" />
+          </div>
+          <p className="text-sm">Carico la tua dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Se non autenticato e Supabase è configurato, non renderizzare nulla (stiamo già facendo redirect)
+  if (auth.stato === "non_autenticato") return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex bg-[#f1f5f9]">
@@ -177,15 +223,22 @@ export default function DashboardPage() {
 
         {/* User section */}
         <div className="px-4 py-4 border-t border-white/[0.06]">
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/[0.04] transition-colors cursor-pointer">
+          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/[0.04] transition-colors">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#009246] to-[#007a3a] flex items-center justify-center text-sm font-bold shadow-lg shadow-[#009246]/20">
-              RP
+              {iniziali}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">Roberto Pizzini</p>
-              <p className="text-[11px] text-gray-500 truncate">Piano Professionista</p>
+              <p className="text-sm font-semibold truncate">{nome} {cognome}</p>
+              <p className="text-[11px] text-gray-500 truncate">{piano}</p>
             </div>
-            <LogOut size={16} className="text-gray-500 hover:text-gray-300 transition-colors" />
+            <button
+              onClick={onLogout}
+              title={supabaseConfigured ? "Esci" : "Torna alla home"}
+              aria-label="Esci"
+              className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              <LogOut size={16} className="text-gray-500 hover:text-gray-300 transition-colors" />
+            </button>
           </div>
         </div>
       </aside>
@@ -222,8 +275,8 @@ export default function DashboardPage() {
             </button>
 
             <button className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-100 transition-colors">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#009246] to-[#007a3a] flex items-center justify-center text-white text-[11px] font-bold">RP</div>
-              <span className="text-sm font-medium text-gray-700">Roberto</span>
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#009246] to-[#007a3a] flex items-center justify-center text-white text-[11px] font-bold">{iniziali}</div>
+              <span className="text-sm font-medium text-gray-700">{nome}</span>
               <ChevronRight size={14} className="text-gray-400 rotate-90" />
             </button>
           </div>
@@ -236,8 +289,8 @@ export default function DashboardPage() {
             {/* ─── WELCOME + VOICE ─── */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-2xl lg:text-[28px] font-bold text-[#0f172a]">Buongiorno, Roberto</h1>
-                <p className="text-sm text-gray-500 mt-1">{todayIT()} &middot; Piano Professionista</p>
+                <h1 className="text-2xl lg:text-[28px] font-bold text-[#0f172a]">Buongiorno, {nome}</h1>
+                <p className="text-sm text-gray-500 mt-1">{todayIT()} &middot; {piano}</p>
               </div>
               <div className="flex items-center gap-3">
                 <button
