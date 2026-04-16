@@ -1,0 +1,67 @@
+# DigiITAle — Netlify deploy config
+# Static export Next.js 16 -> cartella /out servita da Netlify CDN.
+# Niente plugin @netlify/plugin-nextjs: non serve (no SSR/ISR).
+
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--no-audit --no-fund"
+
+# ============================================================================
+# SECURITY HEADERS — Blindatura perimetro.
+# Applicati a tutte le route. Obiettivo: A+ su securityheaders.com.
+# ============================================================================
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # XSS / clickjacking / MIME sniffing
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-XSS-Protection = "1; mode=block"
+
+    # HTTPS forzato per 2 anni + includeSubDomains + preload-ready
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+
+    # Permissions: disabilito tutto tranne quello che ci serve
+    Permissions-Policy = "camera=(), microphone=(self), geolocation=(), payment=(self), usb=(), magnetometer=(), gyroscope=()"
+
+    # CSP — Content Security Policy
+    # - default-src 'self': niente caricamenti da esterni se non esplicitati
+    # - script-src: 'self' + 'unsafe-inline' (React hydration) per ora, stringere con nonces in futuro
+    # - connect-src: self + Supabase (wildcard *.supabase.co/*.supabase.in per WSS realtime)
+    # - img-src: self + data: (inline SVG) + blob: (avatar upload) + https: (Gravatar/similari)
+    # - font-src: self + Google Fonts (usiamo Inter via next/font, che inline)
+    # - frame-ancestors none: no iframe embedding di DigiITAle
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+
+# Asset statici con cache lunghissima (immutabili, hash nel nome)
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
+
+# Redirects
+[[redirects]]
+  from = "/login"
+  to = "/accedi"
+  status = 301
+
+[[redirects]]
+  from = "/signup"
+  to = "/registrati"
+  status = 301
+
+[[redirects]]
+  from = "/register"
+  to = "/registrati"
+  status = 301
