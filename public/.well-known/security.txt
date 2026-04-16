@@ -1,0 +1,19 @@
+Contact: mailto:security@digitale-italia.it
+Expires: 2027-04-16T00:00:00.000Z
+Preferred-Languages: it, en
+Canonical: https://digitale-italia.netlify.app/.well-known/security.txt
+Policy: https://digitale-italia.netlify.app/policy/disclosure
+Hiring: https://digitale-italia.netlify.app/careers
+
+# digITAle — Segnalazione responsabile di vulnerabilità
+#
+# Se hai trovato un problema di sicurezza, scrivici PRIMA di divulgarlo.
+# Ti risponderemo entro 48 ore lavorative. Non intraprendiamo azioni legali
+# contro ricercatori in buona fede che seguono queste regole:
+#
+#  - Non accedere a dati di altri utenti oltre il minimo per dimostrare la vulnerabilità
+#  - Non modificare, eliminare, esfiltrare dati
+#  - Non interrompere il servizio (niente DoS, niente flooding)
+#  - Dacci 90 giorni per correggere prima di divulgare pubblicamente
+#
+# Grazie per aiutarci a proteggere gli italiani che usano digITAle.

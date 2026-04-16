@@ -12,6 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Build artifacts + Netlify cache
+    ".netlify/**",
+    "node_modules/**",
+    "scripts/**",
+    // Public static assets
+    "public/**",
   ]),
 ]);
 
