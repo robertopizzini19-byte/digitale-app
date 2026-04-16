@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Validazione Input
+ * digITAle — Validazione Input
  * Validazione dati italiani: CF, P.IVA, IBAN, email, PEC.
  * Solo a confini di sistema (input utente, API esterne).
  */

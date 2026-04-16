@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Configurazione Applicazione
+ * digITAle — Configurazione Applicazione
  * Tutte le variabili ambiente centralizzate qui.
  * Mai leggere process.env direttamente nei moduli.
  */
@@ -20,7 +20,7 @@ function envOptional(key: string): string | undefined {
 
 export function getConfig(): AppConfig {
   return {
-    nome: "DigiITAle",
+    nome: "digITAle",
     versione: "1.0.0",
     ambiente: (envOptional("NODE_ENV") as AppConfig["ambiente"]) ?? "development",
     baseUrl: env("NEXT_PUBLIC_BASE_URL", "http://localhost:3000"),

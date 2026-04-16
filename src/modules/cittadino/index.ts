@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Modulo Cittadino
+ * digITAle — Modulo Cittadino
  * Score: 19/25. Terzo modulo.
  * Documenti personali, bollette, scuola, sanità — tutto in un posto sicuro.
  * Piano minimo: Gratuito (€0)

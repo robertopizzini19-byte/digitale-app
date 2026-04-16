@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Formattazione Italiana
+ * digITAle — Formattazione Italiana
  * Date, importi, codice fiscale, P.IVA — tutto locale.
  */
 

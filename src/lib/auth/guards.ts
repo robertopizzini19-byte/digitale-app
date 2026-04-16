@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Auth Guards
+ * digITAle — Auth Guards
  * Protezione rotte e verifica permessi.
  * Usato sia lato server (API) che client (navigazione).
  */

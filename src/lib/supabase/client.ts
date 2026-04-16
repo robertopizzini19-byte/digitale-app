@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Supabase Client (browser)
+ * digITAle — Supabase Client (browser)
  *
  * Singleton lato client. Usato dalle pagine "use client".
  * Static export Netlify → tutta l'auth avviene nel browser via ANON key + RLS.

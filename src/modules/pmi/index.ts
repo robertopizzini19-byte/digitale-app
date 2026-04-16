@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Modulo PMI (Piccole e Medie Imprese)
+ * digITAle — Modulo PMI (Piccole e Medie Imprese)
  * Score: 20/25. Secondo modulo dopo Freelance.
  * Estende il modulo Freelance con: multi-utente, team, ruoli, report avanzati.
  * Piano minimo: Impresa (€49/mese)

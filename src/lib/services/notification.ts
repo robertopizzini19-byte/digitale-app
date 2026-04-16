@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Notification Service
+ * digITAle — Notification Service
  * Notifiche in-app, email, push.
  * Le scadenze fiscali generano notifiche automatiche.
  */
@@ -67,7 +67,7 @@ export const TEMPLATE_NOTIFICHE = {
     messaggio: `${titolo} scade oggi. Non dimenticare!`,
   }),
   benvenuto: (nome: string) => ({
-    titolo: `Benvenuto su DigiITAle, ${nome}!`,
+    titolo: `Benvenuto su digITAle, ${nome}!`,
     messaggio: "Il tuo account è pronto. Inizia configurando il tuo profilo professionale.",
   }),
   piano_aggiornato: (piano: string) => ({

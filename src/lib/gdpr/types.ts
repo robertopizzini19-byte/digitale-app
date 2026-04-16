@@ -1,5 +1,5 @@
 /**
- * DigiITAle — GDPR Types
+ * digITAle — GDPR Types
  * Conformità GDPR (Reg. UE 2016/679) e D.Lgs 196/2003 (Codice Privacy italiano).
  *
  * Diritti implementati:

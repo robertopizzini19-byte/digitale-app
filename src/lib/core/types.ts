@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Core Types
+ * digITAle — Core Types
  * Tipi fondamentali condivisi da tutti i moduli.
  * Ogni modulo importa da qui, mai il contrario.
  */

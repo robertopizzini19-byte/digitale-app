@@ -199,7 +199,7 @@ function Footer() {
 
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-500">
-            &copy; 2026 DigiITAle &mdash; Fatto in Italia, per l&apos;Italia.
+            &copy; 2026 digITAle &mdash; Fatto in Italia, per l&apos;Italia.
           </p>
           <p className="text-xs text-gray-600">
             In forge verso il primo lancio pubblico &middot; Niente segreti, niente fretta.
@@ -257,7 +257,7 @@ const STEPS = [
   {
     icon: Sparkles,
     num: "02",
-    title: "DigiITAle Capisce",
+    title: "digITAle Capisce",
     desc: "L'intelligenza artificiale italiana interpreta la tua richiesta e prepara tutto: fatture, documenti, comunicazioni.",
     color: "info",
   },
@@ -518,7 +518,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <span className="inline-block text-sm font-bold tracking-widest uppercase text-rosso mb-4">Il Problema</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark mb-5">
-              Perché serve DigiITAle?
+              Perché serve digITAle?
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-muted leading-relaxed">
               L&apos;Italia è la terza economia dell&apos;Eurozona ma è 18esima nella digitalizzazione.
@@ -564,7 +564,7 @@ export default function Home() {
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-muted leading-relaxed">
               Non sono regole di marketing. Sono i pilastri che definiscono chi siamo.
-              Se li rompiamo, non siamo più DigiITAle.
+              Se li rompiamo, non siamo più digITAle.
             </p>
           </div>
 
@@ -607,7 +607,7 @@ export default function Home() {
                 <div className="flex-1 bg-bianco border-y border-gray-200" />
                 <div className="flex-1 bg-rosso" />
               </div>
-              <span className="text-sm font-medium text-muted">Firmato dal team DigiITAle &middot; Italia, 2026</span>
+              <span className="text-sm font-medium text-muted">Firmato dal team digITAle &middot; Italia, 2026</span>
             </div>
           </div>
         </div>
@@ -622,7 +622,7 @@ export default function Home() {
               Tre passaggi. La tua voce.
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-muted leading-relaxed">
-              Niente manuali, niente formazione. Parla in italiano naturale e DigiITAle gestisce tutto.
+              Niente manuali, niente formazione. Parla in italiano naturale e digITAle gestisce tutto.
             </p>
           </div>
 
@@ -725,7 +725,7 @@ export default function Home() {
               Per ogni italiano che lavora, studia, vive
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-muted leading-relaxed">
-              26 categorie di utenti, un unico ecosistema. DigiITAle cresce con te.
+              26 categorie di utenti, un unico ecosistema. digITAle cresce con te.
             </p>
           </div>
 
@@ -827,12 +827,12 @@ export default function Home() {
               </div>
 
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6">
-                Guarda DigiITAle<br />
+                Guarda digITAle<br />
                 <span className="text-verde">in azione</span>
               </h2>
 
               <p className="text-lg text-gray-400 mb-10 max-w-md mx-auto">
-                Esplora la dashboard interattiva e scopri come sarà lavorare con DigiITAle ogni giorno.
+                Esplora la dashboard interattiva e scopri come sarà lavorare con digITAle ogni giorno.
               </p>
 
               <Link

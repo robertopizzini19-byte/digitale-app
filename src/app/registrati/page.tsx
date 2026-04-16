@@ -153,7 +153,7 @@ export default function RegistratiPage() {
               <CheckCircle2 size={32} className="text-emerald-600" />
             </div>
             <h1 className="text-2xl font-bold text-[#0f172a] mb-3">
-              {successo === "verifica" ? "Controlla la tua email" : "Benvenuto in DigiITAle"}
+              {successo === "verifica" ? "Controlla la tua email" : "Benvenuto in digITAle"}
             </h1>
             <p className="text-sm text-[#64748b] leading-relaxed mb-8">
               {successo === "verifica"
@@ -412,7 +412,7 @@ export default function RegistratiPage() {
         </div>
 
         <p className="text-center text-xs text-[#94a3b8] mt-6">
-          &copy; 2026 DigiITAle &mdash; Fatto in Italia, per l&apos;Italia
+          &copy; 2026 digITAle &mdash; Fatto in Italia, per l&apos;Italia
         </p>
       </div>
     </div>

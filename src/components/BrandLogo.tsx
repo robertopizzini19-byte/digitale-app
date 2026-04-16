@@ -10,9 +10,9 @@ export function BrandLogo({ size = "default", variant = "dark" }: { size?: "sm" 
   const base = variant === "dark" ? "text-[#0f172a]" : "text-white";
 
   return (
-    <span className="inline-flex flex-col select-none" aria-label="DigITAle">
+    <span className="inline-flex flex-col select-none" aria-label="digITAle">
       <span className={`inline-flex items-baseline brand-ita brand-ita--${variant}`}>
-        <span className={`${s.dig} font-medium ${base} tracking-tight leading-none`}>Dig</span>
+        <span className={`${s.dig} font-medium ${base} tracking-tight leading-none`}>dig</span>
         <span className={`${s.ita} font-extrabold tracking-[-0.02em] leading-none`}>
           <span className="brand-I">I</span>
           <span className="brand-T">T</span>

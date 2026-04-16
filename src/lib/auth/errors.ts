@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Mappa messaggi errore Supabase → italiano umano.
+ * digITAle — Mappa messaggi errore Supabase → italiano umano.
  * Niente gergo tecnico: parliamo a chi di tecnologia non capisce niente.
  */
 

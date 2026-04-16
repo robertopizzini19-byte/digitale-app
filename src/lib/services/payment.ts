@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Payment Service
+ * digITAle — Payment Service
  * Motore economico: Stripe + Satispay.
  * Tutti gli importi in CENTESIMI (integer). Mai float per i soldi.
  */

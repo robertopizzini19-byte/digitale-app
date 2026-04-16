@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Sistema Moduli
+ * digITAle — Sistema Moduli
  * Ogni nicchia (freelance, PMI, PA...) è un modulo indipendente.
  * I moduli si registrano nel registry e il core li orchestra.
  *

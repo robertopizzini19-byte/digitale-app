@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Costanti di Sistema
+ * digITAle — Costanti di Sistema
  * Tutte le costanti business dell'ecosistema.
  * Derivate dai documenti fondanti (Visione v1, Operativo v1, Proposta AVS v2).
  */

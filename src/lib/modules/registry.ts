@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Module Registry
+ * digITAle — Module Registry
  * Registro centrale di tutti i moduli. Punto unico di accesso.
  *
  * Uso:

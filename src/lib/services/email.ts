@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Email & PEC Service
+ * digITAle — Email & PEC Service
  * Invio email transazionali + PEC per documenti legali.
  * Backend: Resend (transazionali) + provider PEC certificato.
  */

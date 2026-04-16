@@ -1,5 +1,5 @@
 /**
- * DigiITAle — API Client
+ * digITAle — API Client
  * Client HTTP tipizzato. Unico punto di uscita verso il backend.
  * Gestisce: auth headers, refresh token, retry, error parsing.
  */

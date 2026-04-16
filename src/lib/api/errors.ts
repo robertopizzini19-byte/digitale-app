@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Error Handling
+ * digITAle — Error Handling
  * Errori strutturati, logging, e messaggi utente in italiano.
  */
 
@@ -63,5 +63,5 @@ export function logErrore(
   };
 
   // In produzione: inviare a servizio di logging (es. Sentry)
-  console.error("[DigiITAle]", JSON.stringify(entry));
+  console.error("[digITAle]", JSON.stringify(entry));
 }

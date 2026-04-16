@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Modulo Freelance: Configurazione
+ * digITAle — Modulo Freelance: Configurazione
  * Registrazione del modulo nel sistema.
  */
 

@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Traduzioni Italiano
+ * digITAle — Traduzioni Italiano
  * Tutte le stringhe dell'interfaccia centralizzate.
  * L'app è Italian-first: l'italiano non è una traduzione, è la lingua nativa.
  */
@@ -64,7 +64,7 @@ export const it = {
     ultimeFatture: "Fatture Recenti",
     prossimeScadenze: "Prossime Scadenze",
     assistenteVocale: "Assistente Vocale",
-    parlaConDigitale: "Parla con DigiITAle",
+    parlaConDigitale: "Parla con digITAle",
     stoAscoltando: "Sto ascoltando...",
     azioniRapide: "Azioni Rapide",
   },

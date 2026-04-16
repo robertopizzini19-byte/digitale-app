@@ -10,16 +10,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "DigiITAle — Lo Standard Digitale Italiano",
+  title: "digITAle — Lo Standard Digitale Italiano",
   description:
     "L'ecosistema digitale pensato per gli italiani, dagli italiani. Semplice, onesto, sovrano.",
   openGraph: {
-    title: "DigITAle — Lo Standard Digitale Italiano",
+    title: "digITAle — Lo Standard Digitale Italiano",
     description:
       "L'ecosistema digitale pensato per gli italiani, dagli italiani. Semplice, onesto, sovrano.",
     locale: "it_IT",
     type: "website",
-    siteName: "DigITAle",
+    siteName: "digITAle",
   },
 };
 

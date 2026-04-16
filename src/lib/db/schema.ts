@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Database Schema Types
+ * digITAle — Database Schema Types
  * Definizioni TypeScript che mappano 1:1 le tabelle PostgreSQL.
  * Le migration SQL in /migrations creano queste tabelle su Supabase.
  *

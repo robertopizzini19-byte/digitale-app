@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Voice AI Service
+ * digITAle — Voice AI Service
  * Interfaccia assistente vocale italiano.
  * STT: Whisper API | TTS: edge-tts (Diego Neural)
  * NLU: Claude/Haiku per intent parsing in italiano naturale.

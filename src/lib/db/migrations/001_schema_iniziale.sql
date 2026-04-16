@@ -1,5 +1,5 @@
 -- ============================================================
--- DigiITAle — Migration 001: Schema Iniziale
+-- digITAle — Migration 001: Schema Iniziale
 -- Database: PostgreSQL (Supabase)
 -- Sicurezza: RLS (Row Level Security) su TUTTE le tabelle
 -- ============================================================

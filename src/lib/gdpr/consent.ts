@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Consent Manager
+ * digITAle — Consent Manager
  * Gestione centralizzata dei consensi GDPR.
  * Ogni azione che tocca dati personali verifica il consenso qui.
  */
@@ -104,7 +104,7 @@ export class ConsentManager {
   static cookieBanner(): CookieBannerConfig {
     return {
       mostra: true,
-      testo: "DigiITAle utilizza cookie tecnici necessari al funzionamento e, con il tuo consenso, cookie di analisi per migliorare il servizio.",
+      testo: "digITAle utilizza cookie tecnici necessari al funzionamento e, con il tuo consenso, cookie di analisi per migliorare il servizio.",
       linkPrivacy: "/privacy",
       linkCookie: "/cookie-policy",
       categorie: [
@@ -118,7 +118,7 @@ export class ConsentManager {
         {
           id: "analytics",
           nome: "Cookie Analitici",
-          descrizione: "Ci aiutano a capire come usi DigiITAle per migliorare il servizio.",
+          descrizione: "Ci aiutano a capire come usi digITAle per migliorare il servizio.",
           obbligatorio: false,
           attivo: false,
         },

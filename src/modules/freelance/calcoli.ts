@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Modulo Freelance: Calcoli Fiscali
+ * digITAle — Modulo Freelance: Calcoli Fiscali
  * Logica di calcolo fatture, IVA, ritenute, bollo.
  * Tutto in centesimi. Niente float per i soldi.
  */

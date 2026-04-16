@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Security Utilities
+ * digITAle — Security Utilities
  * Difesa in profondità: sanitizzazione, CSP, rate limiting.
  * OWASP Top 10 come baseline.
  */

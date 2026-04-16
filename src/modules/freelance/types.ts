@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Modulo Freelance: Types
+ * digITAle — Modulo Freelance: Types
  * Tipi specifici per freelance e professionisti.
  * Score: 23/25 (primo modulo scelto).
  *

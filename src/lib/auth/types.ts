@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Auth Types
+ * digITAle — Auth Types
  * Supporta: email/password, SPID, CIE.
  * Backend: Supabase Auth (quando connesso).
  */

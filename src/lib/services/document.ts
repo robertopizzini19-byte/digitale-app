@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Document Service
+ * digITAle — Document Service
  * Gestione documenti: upload, download, validazione, hash.
  * Storage: Supabase Storage (quando connesso).
  */

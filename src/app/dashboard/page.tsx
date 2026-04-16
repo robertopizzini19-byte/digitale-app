@@ -302,7 +302,7 @@ export default function DashboardPage() {
                     }`}
                 >
                   <Mic size={18} />
-                  {voiceActive ? "Sto ascoltando..." : "Parla con DigiITAle"}
+                  {voiceActive ? "Sto ascoltando..." : "Parla con digITAle"}
                 </button>
                 <button className="p-3 rounded-2xl border border-gray-200 hover:border-[#009246]/40 hover:bg-[#009246]/5 transition-all">
                   <Plus size={18} className="text-gray-600" />
@@ -600,7 +600,7 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
-                      placeholder="Scrivi o parla con DigiITAle..."
+                      placeholder="Scrivi o parla con digITAle..."
                       className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#009246]/20 focus:border-[#009246]/40 transition-all"
                     />
                     <button className="w-10 h-10 rounded-xl bg-[#009246] hover:bg-[#007a3a] flex items-center justify-center text-white transition-colors shrink-0 shadow-sm active:scale-95">

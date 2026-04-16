@@ -88,7 +88,7 @@ export default function AccediPage() {
           {/* Title */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-[#0f172a] mb-2">Bentornato</h1>
-            <p className="text-sm text-[#64748b]">Accedi per continuare su DigiITAle</p>
+            <p className="text-sm text-[#64748b]">Accedi per continuare su digITAle</p>
           </div>
 
           {/* Demo banner */}
@@ -237,7 +237,7 @@ export default function AccediPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-[#94a3b8] mt-6">
-          &copy; 2026 DigiITAle &mdash; Fatto in Italia, per l&apos;Italia
+          &copy; 2026 digITAle &mdash; Fatto in Italia, per l&apos;Italia
         </p>
       </div>
     </div>

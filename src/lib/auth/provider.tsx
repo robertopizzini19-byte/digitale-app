@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * DigiITAle — Auth Provider
+ * digITAle — Auth Provider
  *
  * Espone useAuth() a tutte le pagine client.
  * Gestisce: sessione Supabase, profilo utente da public.utenti, signIn/signUp/signOut.

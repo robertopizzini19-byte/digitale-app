@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Bootstrap Moduli
+ * digITAle — Bootstrap Moduli
  * Registra tutti i moduli nel registry all'avvio dell'app.
  * Aggiungere qui ogni nuovo modulo creato.
  *
@@ -32,7 +32,7 @@ export function bootstrapModuli(): void {
   // Log moduli attivi
   const attivi = registry.attivi();
   console.log(
-    `[DigiITAle] ${attivi.length} modul${attivi.length === 1 ? "o" : "i"} attiv${attivi.length === 1 ? "o" : "i"}:`,
+    `[digITAle] ${attivi.length} modul${attivi.length === 1 ? "o" : "i"} attiv${attivi.length === 1 ? "o" : "i"}:`,
     attivi.map((m) => m.definizione.nome).join(", ")
   );
 

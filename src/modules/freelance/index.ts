@@ -1,5 +1,5 @@
 /**
- * DigiITAle — Modulo Freelance: Entry Point
+ * digITAle — Modulo Freelance: Entry Point
  * Re-export di tutto ciò che il modulo espone al core.
  */
 
