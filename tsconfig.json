@@ -30,5 +30,12 @@
     "**/*.mts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", ".next/dev", "out"]
+  "exclude": [
+    "node_modules",
+    ".next/dev",
+    "out",
+    "tests/e2e",
+    "playwright.config.ts",
+    "supabase/functions/**"
+  ]
 }

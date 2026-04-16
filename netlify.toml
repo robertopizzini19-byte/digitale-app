@@ -1,4 +1,4 @@
-# DigiITAle — Netlify deploy config
+# digITAle — Netlify deploy config
 # Static export Next.js 16 -> cartella /out servita da Netlify CDN.
 # Niente plugin @netlify/plugin-nextjs: non serve (no SSR/ISR).
 
@@ -9,6 +9,34 @@
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--no-audit --no-fund"
+
+# ============================================================================
+# CONTEXTS — ambienti separati: production / staging / deploy-preview / branch
+# Env vars specifiche si settano in Netlify UI -> Site > Environment variables
+# scegliendo il context di appartenenza.
+# ============================================================================
+
+[context.production]
+  command = "npm run build"
+  [context.production.environment]
+    NEXT_PUBLIC_APP_ENV = "production"
+    NEXT_PUBLIC_APP_URL = "https://digitale-italia.netlify.app"
+
+[context.staging]
+  command = "npm run build"
+  [context.staging.environment]
+    NEXT_PUBLIC_APP_ENV = "staging"
+    NEXT_PUBLIC_APP_URL = "https://staging--digitale-italia.netlify.app"
+
+[context.deploy-preview]
+  command = "npm run build"
+  [context.deploy-preview.environment]
+    NEXT_PUBLIC_APP_ENV = "preview"
+
+[context.branch-deploy]
+  command = "npm run build"
+  [context.branch-deploy.environment]
+    NEXT_PUBLIC_APP_ENV = "branch"
 
 # ============================================================================
 # SECURITY HEADERS — Blindatura perimetro.
@@ -30,14 +58,30 @@
     # Permissions: disabilito tutto tranne quello che ci serve
     Permissions-Policy = "camera=(), microphone=(self), geolocation=(), payment=(self), usb=(), magnetometer=(), gyroscope=()"
 
-    # CSP — Content Security Policy
+    # CSP — Content Security Policy (Sentry eu.sentry.io in connect-src per observability)
     # - default-src 'self': niente caricamenti da esterni se non esplicitati
     # - script-src: 'self' + 'unsafe-inline' (React hydration) per ora, stringere con nonces in futuro
-    # - connect-src: self + Supabase (wildcard *.supabase.co/*.supabase.in per WSS realtime)
+    # - connect-src: self + Supabase (wildcard *.supabase.co/*.supabase.in per WSS realtime) + Sentry EU
     # - img-src: self + data: (inline SVG) + blob: (avatar upload) + https: (Gravatar/similari)
     # - font-src: self + Google Fonts (usiamo Inter via next/font, che inline)
-    # - frame-ancestors none: no iframe embedding di DigiITAle
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+    # - frame-ancestors none: no iframe embedding di digITAle
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in https://*.ingest.eu.sentry.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+
+# Staging / preview: X-Robots-Tag noindex + basic auth via Netlify UI
+[[context.staging.headers]]
+  for = "/*"
+  [context.staging.headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+
+[[context.deploy-preview.headers]]
+  for = "/*"
+  [context.deploy-preview.headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+
+[[context.branch-deploy.headers]]
+  for = "/*"
+  [context.branch-deploy.headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
 
 # Asset statici con cache lunghissima (immutabili, hash nel nome)
 [[headers]]

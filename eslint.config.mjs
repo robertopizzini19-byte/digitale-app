@@ -18,6 +18,11 @@ const eslintConfig = defineConfig([
     "scripts/**",
     // Public static assets
     "public/**",
+    // E2E tests (uso framework Playwright, non React/Next)
+    "tests/e2e/**",
+    "playwright.config.ts",
+    "playwright-report/**",
+    "test-results/**",
   ]),
 ]);
 

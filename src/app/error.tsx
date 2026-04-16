@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { BrandLogo } from "@/components/BrandLogo";
+import { captureException } from "@/lib/observability/sentry";
 
 /**
  * Error Boundary globale Next.js (route-level).
@@ -18,13 +19,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
       stack: error.stack?.split("\n").slice(0, 3).join(" | "),
     });
 
-    // Hook per observability futura (Sentry.captureException, etc.)
-    if (
-      typeof window !== "undefined" &&
-      (window as unknown as { __digitaleLogError?: (e: Error) => void }).__digitaleLogError
-    ) {
-      (window as unknown as { __digitaleLogError: (e: Error) => void }).__digitaleLogError(error);
-    }
+    void captureException(error, { digest: error.digest, surface: "route-error-boundary" });
   }, [error]);
 
   return (
