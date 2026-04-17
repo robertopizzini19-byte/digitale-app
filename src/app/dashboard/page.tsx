@@ -60,17 +60,71 @@ const NAV_BOTTOM = [
 ];
 
 const INVOICES = [
-  { cliente: "Marco Bianchi", azienda: "Studio Bianchi", importo: "€1.200,00", data: "14 Apr 2026", stato: "pagata" as const, tipo: "Consulenza IT" },
-  { cliente: "Studio Legale Verdi", azienda: "Verdi & Associati", importo: "€3.500,00", data: "12 Apr 2026", stato: "attesa" as const, tipo: "Sviluppo Web" },
-  { cliente: "Francesca Moretti", azienda: "Moretti Design", importo: "€750,00", data: "10 Apr 2026", stato: "pagata" as const, tipo: "Grafica" },
-  { cliente: "Agenzia Sole Srl", azienda: "Sole Media", importo: "€2.100,00", data: "08 Apr 2026", stato: "scaduta" as const, tipo: "Social Media" },
-  { cliente: "Giuseppe Conti", azienda: "Conti Edilizia", importo: "€480,00", data: "05 Apr 2026", stato: "attesa" as const, tipo: "Preventivo" },
-  { cliente: "Laura Ferrara", azienda: "Ferrara Consulting", importo: "€1.800,00", data: "02 Apr 2026", stato: "pagata" as const, tipo: "Consulenza" },
+  {
+    cliente: "Marco Bianchi",
+    azienda: "Studio Bianchi",
+    importo: "€1.200,00",
+    data: "14 Apr 2026",
+    stato: "pagata" as const,
+    tipo: "Consulenza IT",
+  },
+  {
+    cliente: "Studio Legale Verdi",
+    azienda: "Verdi & Associati",
+    importo: "€3.500,00",
+    data: "12 Apr 2026",
+    stato: "attesa" as const,
+    tipo: "Sviluppo Web",
+  },
+  {
+    cliente: "Francesca Moretti",
+    azienda: "Moretti Design",
+    importo: "€750,00",
+    data: "10 Apr 2026",
+    stato: "pagata" as const,
+    tipo: "Grafica",
+  },
+  {
+    cliente: "Agenzia Sole Srl",
+    azienda: "Sole Media",
+    importo: "€2.100,00",
+    data: "08 Apr 2026",
+    stato: "scaduta" as const,
+    tipo: "Social Media",
+  },
+  {
+    cliente: "Giuseppe Conti",
+    azienda: "Conti Edilizia",
+    importo: "€480,00",
+    data: "05 Apr 2026",
+    stato: "attesa" as const,
+    tipo: "Preventivo",
+  },
+  {
+    cliente: "Laura Ferrara",
+    azienda: "Ferrara Consulting",
+    importo: "€1.800,00",
+    data: "02 Apr 2026",
+    stato: "pagata" as const,
+    tipo: "Consulenza",
+  },
 ];
 
 const STATO_CONFIG = {
-  pagata: { label: "Pagata", icon: CheckCircle2, bg: "bg-emerald-50", text: "text-emerald-700", dot: "bg-emerald-500" },
-  attesa: { label: "In Attesa", icon: AlertCircle, bg: "bg-amber-50", text: "text-amber-700", dot: "bg-amber-500" },
+  pagata: {
+    label: "Pagata",
+    icon: CheckCircle2,
+    bg: "bg-emerald-50",
+    text: "text-emerald-700",
+    dot: "bg-emerald-500",
+  },
+  attesa: {
+    label: "In Attesa",
+    icon: AlertCircle,
+    bg: "bg-amber-50",
+    text: "text-amber-700",
+    dot: "bg-amber-500",
+  },
   scaduta: { label: "Scaduta", icon: XCircle, bg: "bg-red-50", text: "text-red-700", dot: "bg-red-500" },
 };
 
@@ -94,7 +148,20 @@ const UPCOMING = [
 function todayIT(): string {
   const d = new Date();
   const giorni = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
-  const mesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+  const mesi = [
+    "Gennaio",
+    "Febbraio",
+    "Marzo",
+    "Aprile",
+    "Maggio",
+    "Giugno",
+    "Luglio",
+    "Agosto",
+    "Settembre",
+    "Ottobre",
+    "Novembre",
+    "Dicembre",
+  ];
   return `${giorni[d.getDay()]} ${d.getDate()} ${mesi[d.getMonth()]} ${d.getFullYear()}`;
 }
 
@@ -122,9 +189,10 @@ export default function DashboardPage() {
   // Derived: nome/cognome/piano dal DB utenti, con fallback demo
   const nome = auth.stato === "autenticato" ? auth.user.nome || "amico" : "Roberto";
   const cognome = auth.stato === "autenticato" ? auth.user.cognome : "Pizzini";
-  const piano = auth.stato === "autenticato"
-    ? (PIANO_LABEL[auth.user.piano] ?? "Piano Gratuito")
-    : "Piano Professionista (demo)";
+  const piano =
+    auth.stato === "autenticato"
+      ? (PIANO_LABEL[auth.user.piano] ?? "Piano Gratuito")
+      : "Piano Professionista (demo)";
   const iniziali = `${nome[0] ?? "D"}${cognome[0] ?? ""}`.toUpperCase();
 
   async function onLogout() {
@@ -153,7 +221,10 @@ export default function DashboardPage() {
     <div className="fixed inset-0 z-[100] flex bg-[#f1f5f9]">
       {/* Mobile overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-[101] bg-black/50 backdrop-blur-sm lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div
+          className="fixed inset-0 z-[101] bg-black/50 backdrop-blur-sm lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
       )}
 
       {/* ───── SIDEBAR ───── */}
@@ -170,7 +241,11 @@ export default function DashboardPage() {
           <Link href="/">
             <BrandLogo variant="light" />
           </Link>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1.5 rounded-lg hover:bg-white/10 transition-colors" aria-label="Chiudi">
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-1.5 rounded-lg hover:bg-white/10 transition-colors"
+            aria-label="Chiudi"
+          >
             <X size={18} />
           </button>
         </div>
@@ -185,16 +260,19 @@ export default function DashboardPage() {
 
         {/* Nav */}
         <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 px-3 mb-2">Menu Principale</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 px-3 mb-2">
+            Menu Principale
+          </p>
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             return (
               <button
                 key={item.label}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all cursor-pointer
-                  ${item.active
-                    ? "bg-white/[0.08] text-white"
-                    : "text-gray-400 hover:bg-white/[0.04] hover:text-gray-200"
+                  ${
+                    item.active
+                      ? "bg-white/[0.08] text-white"
+                      : "text-gray-400 hover:bg-white/[0.04] hover:text-gray-200"
                   }`}
               >
                 <Icon size={18} className={item.active ? "text-[#009246]" : ""} />
@@ -209,11 +287,16 @@ export default function DashboardPage() {
           })}
 
           <div className="my-4 border-t border-white/[0.06]" />
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 px-3 mb-2">Sistema</p>
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 px-3 mb-2">
+            Sistema
+          </p>
           {NAV_BOTTOM.map((item) => {
             const Icon = item.icon;
             return (
-              <button key={item.label} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-gray-400 hover:bg-white/[0.04] hover:text-gray-200 transition-all cursor-pointer">
+              <button
+                key={item.label}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-gray-400 hover:bg-white/[0.04] hover:text-gray-200 transition-all cursor-pointer"
+              >
                 <Icon size={18} />
                 {item.label}
               </button>
@@ -228,7 +311,9 @@ export default function DashboardPage() {
               {iniziali}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">{nome} {cognome}</p>
+              <p className="text-sm font-semibold truncate">
+                {nome} {cognome}
+              </p>
               <p className="text-[11px] text-gray-500 truncate">{piano}</p>
             </div>
             <button
@@ -245,9 +330,22 @@ export default function DashboardPage() {
 
       {/* ───── MAIN AREA ───── */}
       <div className="flex-1 flex flex-col min-w-0">
+        {auth.stato === "demo" && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs px-4 lg:px-8 py-2 text-center font-medium"
+          >
+            🟡 MODALITÀ DEMO — Dati mostrati sono fittizi. Per dati reali connetti Supabase.
+          </div>
+        )}
         {/* ───── TOP BAR ───── */}
         <header className="h-[72px] bg-white border-b border-gray-200/80 flex items-center px-4 lg:px-8 gap-4 shrink-0">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2.5 rounded-xl hover:bg-gray-100 transition-colors" aria-label="Menu">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden p-2.5 rounded-xl hover:bg-gray-100 transition-colors"
+            aria-label="Menu"
+          >
             <Menu size={20} className="text-gray-700" />
           </button>
 
@@ -264,18 +362,24 @@ export default function DashboardPage() {
                 placeholder="Cerca fatture, clienti, documenti..."
                 className="w-full pl-11 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#009246]/20 focus:border-[#009246]/40 transition-all"
               />
-              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Ctrl+K</kbd>
+              <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+                Ctrl+K
+              </kbd>
             </div>
           </div>
 
           <div className="flex items-center gap-2 ml-auto">
             <button className="relative p-2.5 rounded-xl hover:bg-gray-100 transition-colors">
               <Bell size={20} className="text-gray-500" />
-              <span className="absolute top-1.5 right-1.5 w-[18px] h-[18px] bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">3</span>
+              <span className="absolute top-1.5 right-1.5 w-[18px] h-[18px] bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
+                3
+              </span>
             </button>
 
             <button className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-100 transition-colors">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#009246] to-[#007a3a] flex items-center justify-center text-white text-[11px] font-bold">{iniziali}</div>
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#009246] to-[#007a3a] flex items-center justify-center text-white text-[11px] font-bold">
+                {iniziali}
+              </div>
               <span className="text-sm font-medium text-gray-700">{nome}</span>
               <ChevronRight size={14} className="text-gray-400 rotate-90" />
             </button>
@@ -285,20 +389,22 @@ export default function DashboardPage() {
         {/* ───── SCROLLABLE CONTENT ───── */}
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-6 lg:py-8 space-y-6 lg:space-y-8">
-
             {/* ─── WELCOME + VOICE ─── */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h1 className="text-2xl lg:text-[28px] font-bold text-[#0f172a]">Buongiorno, {nome}</h1>
-                <p className="text-sm text-gray-500 mt-1">{todayIT()} &middot; {piano}</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  {todayIT()} &middot; {piano}
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setVoiceActive(!voiceActive)}
                   className={`flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-semibold transition-all active:scale-[0.97]
-                    ${voiceActive
-                      ? "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 pulse-glow"
-                      : "bg-[#009246] hover:bg-[#007a3a] text-white shadow-lg shadow-[#009246]/25"
+                    ${
+                      voiceActive
+                        ? "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 pulse-glow"
+                        : "bg-[#009246] hover:bg-[#007a3a] text-white shadow-lg shadow-[#009246]/25"
                     }`}
                 >
                   <Mic size={18} />
@@ -315,7 +421,9 @@ export default function DashboardPage() {
               {/* Fatturato */}
               <div className="bg-white rounded-2xl p-5 lg:p-6 shadow-sm border border-gray-100 card-hover">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Fatturato Mese</span>
+                  <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                    Fatturato Mese
+                  </span>
                   <span className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
                     <TrendingUp size={18} className="text-emerald-600" />
                   </span>
@@ -332,7 +440,9 @@ export default function DashboardPage() {
               {/* In Attesa */}
               <div className="bg-white rounded-2xl p-5 lg:p-6 shadow-sm border border-gray-100 card-hover">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">In Attesa</span>
+                  <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                    In Attesa
+                  </span>
                   <span className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
                     <Clock size={18} className="text-amber-600" />
                   </span>
@@ -344,7 +454,9 @@ export default function DashboardPage() {
               {/* Clienti */}
               <div className="bg-white rounded-2xl p-5 lg:p-6 shadow-sm border border-gray-100 card-hover">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Clienti Attivi</span>
+                  <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                    Clienti Attivi
+                  </span>
                   <span className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
                     <Users size={18} className="text-blue-600" />
                   </span>
@@ -361,7 +473,9 @@ export default function DashboardPage() {
               {/* Scadenza */}
               <div className="bg-white rounded-2xl p-5 lg:p-6 shadow-sm border border-gray-100 card-hover">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">Prossima Scadenza</span>
+                  <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                    Prossima Scadenza
+                  </span>
                   <span className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
                     <Calendar size={18} className="text-red-600" />
                   </span>
@@ -381,15 +495,21 @@ export default function DashboardPage() {
                     <p className="text-xs text-gray-400 mt-0.5">Ultimi 6 mesi</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button className="text-xs font-medium text-[#009246] bg-[#009246]/8 px-3 py-1.5 rounded-lg">Mensile</button>
-                    <button className="text-xs font-medium text-gray-400 hover:text-gray-600 px-3 py-1.5 rounded-lg transition-colors">Settimanale</button>
+                    <button className="text-xs font-medium text-[#009246] bg-[#009246]/8 px-3 py-1.5 rounded-lg">
+                      Mensile
+                    </button>
+                    <button className="text-xs font-medium text-gray-400 hover:text-gray-600 px-3 py-1.5 rounded-lg transition-colors">
+                      Settimanale
+                    </button>
                   </div>
                 </div>
                 <div className="px-6 py-6">
                   <div className="flex items-end gap-4 h-[200px]">
                     {CHART_DATA.map((bar) => (
                       <div key={bar.month} className="flex-1 flex flex-col items-center gap-2">
-                        <span className="text-[11px] font-semibold text-gray-500">&euro;{bar.value.toLocaleString()}</span>
+                        <span className="text-[11px] font-semibold text-gray-500">
+                          &euro;{bar.value.toLocaleString()}
+                        </span>
                         <div className="w-full relative" style={{ height: "160px" }}>
                           <div
                             className="absolute bottom-0 w-full rounded-xl bg-gradient-to-t from-[#009246] to-[#00b359] transition-all duration-700 hover:opacity-80"
@@ -411,17 +531,32 @@ export default function DashboardPage() {
                 </div>
                 <div className="divide-y divide-gray-50">
                   {UPCOMING.map((item) => (
-                    <div key={item.label} className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50/50 transition-colors">
-                      <div className={`w-3 h-3 rounded-full shrink-0 ${
-                        item.type === "urgente" ? "bg-red-500" : item.type === "normale" ? "bg-amber-500" : "bg-blue-500"
-                      }`} />
+                    <div
+                      key={item.label}
+                      className="px-6 py-4 flex items-center gap-4 hover:bg-gray-50/50 transition-colors"
+                    >
+                      <div
+                        className={`w-3 h-3 rounded-full shrink-0 ${
+                          item.type === "urgente"
+                            ? "bg-red-500"
+                            : item.type === "normale"
+                              ? "bg-amber-500"
+                              : "bg-blue-500"
+                        }`}
+                      />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-[#0f172a]">{item.label}</p>
                         <p className="text-xs text-gray-400">{item.date}</p>
                       </div>
-                      <span className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-md ${
-                        item.type === "urgente" ? "bg-red-50 text-red-600" : item.type === "normale" ? "bg-amber-50 text-amber-600" : "bg-blue-50 text-blue-600"
-                      }`}>
+                      <span
+                        className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-md ${
+                          item.type === "urgente"
+                            ? "bg-red-50 text-red-600"
+                            : item.type === "normale"
+                              ? "bg-amber-50 text-amber-600"
+                              : "bg-blue-50 text-blue-600"
+                        }`}
+                      >
                         {item.type}
                       </span>
                     </div>
@@ -456,12 +591,24 @@ export default function DashboardPage() {
                   <table className="w-full">
                     <thead>
                       <tr className="bg-gray-50/60">
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Cliente</th>
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Tipo</th>
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Importo</th>
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Data</th>
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Stato</th>
-                        <th className="text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Azioni</th>
+                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                          Cliente
+                        </th>
+                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                          Tipo
+                        </th>
+                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                          Importo
+                        </th>
+                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                          Data
+                        </th>
+                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                          Stato
+                        </th>
+                        <th className="text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                          Azioni
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -474,23 +621,36 @@ export default function DashboardPage() {
                               <p className="text-xs text-gray-400">{inv.azienda}</p>
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-500">{inv.tipo}</td>
-                            <td className="px-6 py-4 text-sm font-semibold text-[#0f172a] font-mono">{inv.importo}</td>
+                            <td className="px-6 py-4 text-sm font-semibold text-[#0f172a] font-mono">
+                              {inv.importo}
+                            </td>
                             <td className="px-6 py-4 text-sm text-gray-500">{inv.data}</td>
                             <td className="px-6 py-4">
-                              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold ${stato.bg} ${stato.text}`}>
+                              <span
+                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold ${stato.bg} ${stato.text}`}
+                              >
                                 <span className={`w-1.5 h-1.5 rounded-full ${stato.dot}`} />
                                 {stato.label}
                               </span>
                             </td>
                             <td className="px-6 py-4 text-right">
                               <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Visualizza">
+                                <button
+                                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                                  title="Visualizza"
+                                >
                                   <Eye size={14} className="text-gray-400" />
                                 </button>
-                                <button className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Scarica">
+                                <button
+                                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                                  title="Scarica"
+                                >
                                   <Download size={14} className="text-gray-400" />
                                 </button>
-                                <button className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Altro">
+                                <button
+                                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                                  title="Altro"
+                                >
                                   <MoreHorizontal size={14} className="text-gray-400" />
                                 </button>
                               </div>
@@ -510,7 +670,10 @@ export default function DashboardPage() {
                       <div key={i} className="px-5 py-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-[11px] font-bold text-gray-600">
-                            {inv.cliente.split(" ").map(w => w[0]).join("")}
+                            {inv.cliente
+                              .split(" ")
+                              .map((w) => w[0])
+                              .join("")}
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-[#0f172a]">{inv.cliente}</p>
@@ -519,7 +682,9 @@ export default function DashboardPage() {
                         </div>
                         <div className="text-right">
                           <p className="text-sm font-semibold text-[#0f172a] font-mono">{inv.importo}</p>
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold mt-1 ${stato.bg} ${stato.text}`}>
+                          <span
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold mt-1 ${stato.bg} ${stato.text}`}
+                          >
                             <span className={`w-1 h-1 rounded-full ${stato.dot}`} />
                             {stato.label}
                           </span>
@@ -548,7 +713,9 @@ export default function DashboardPage() {
                 <div className="flex-1 px-5 py-5 space-y-4 overflow-y-auto">
                   {/* System message */}
                   <div className="text-center">
-                    <span className="text-[10px] text-gray-400 bg-gray-50 px-3 py-1 rounded-full">Oggi, {new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}</span>
+                    <span className="text-[10px] text-gray-400 bg-gray-50 px-3 py-1 rounded-full">
+                      Oggi, {new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}
+                    </span>
                   </div>
 
                   {/* User message */}
@@ -565,7 +732,10 @@ export default function DashboardPage() {
                     </div>
                     <div className="max-w-[85%]">
                       <div className="bg-gray-50 text-[#0f172a] px-4 py-3 rounded-2xl rounded-tl-md text-[13px] leading-relaxed">
-                        <p>Fattura <span className="font-bold">#2026-047</span> creata per <span className="font-bold">Mario Rossi</span></p>
+                        <p>
+                          Fattura <span className="font-bold">#2026-047</span> creata per{" "}
+                          <span className="font-bold">Mario Rossi</span>
+                        </p>
                         <div className="mt-2 p-2.5 bg-white rounded-xl border border-gray-100 space-y-1">
                           <div className="flex justify-between text-xs">
                             <span className="text-gray-500">Imponibile</span>
@@ -613,7 +783,9 @@ export default function DashboardPage() {
 
             {/* Quick Actions */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-5">
-              <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">Azioni Rapide</h3>
+              <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-4">
+                Azioni Rapide
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {[
                   { label: "Nuova Fattura", icon: FileText },
@@ -627,7 +799,10 @@ export default function DashboardPage() {
                 ].map((action) => {
                   const Icon = action.icon;
                   return (
-                    <button key={action.label} className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 hover:border-[#009246]/40 hover:bg-[#009246]/5 text-sm font-medium text-gray-600 hover:text-[#009246] transition-all">
+                    <button
+                      key={action.label}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 hover:border-[#009246]/40 hover:bg-[#009246]/5 text-sm font-medium text-gray-600 hover:text-[#009246] transition-all"
+                    >
                       <Icon size={14} />
                       {action.label}
                     </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Mail,
   Lock,
@@ -20,14 +20,19 @@ import {
   Heart,
   Shield,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, Suspense } from "react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { useAuth } from "@/lib/auth/provider";
 import { supabaseConfigured } from "@/lib/supabase/client";
 import type { UserRole } from "@/lib/core/types";
 import { PASSWORD_REQUIREMENTS } from "@/lib/auth/types";
 
-const RUOLI: Array<{ id: UserRole; label: string; icon: React.ComponentType<{ size?: number; className?: string }>; desc: string }> = [
+const RUOLI: Array<{
+  id: UserRole;
+  label: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  desc: string;
+}> = [
   { id: "freelance", label: "Freelance / P.IVA", icon: Briefcase, desc: "Liberi professionisti, autonomi" },
   { id: "pmi", label: "PMI / Impresa", icon: Building2, desc: "Piccole e medie imprese" },
   { id: "cittadino", label: "Cittadino", icon: Heart, desc: "Cittadino italiano privato" },
@@ -55,16 +60,15 @@ function calcolaForza(pw: string): { score: number; label: string; color: string
 
 function passwordValida(pw: string): boolean {
   return (
-    pw.length >= PASSWORD_REQUIREMENTS.minLength &&
-    /[A-Z]/.test(pw) &&
-    /[a-z]/.test(pw) &&
-    /[0-9]/.test(pw)
+    pw.length >= PASSWORD_REQUIREMENTS.minLength && /[A-Z]/.test(pw) && /[a-z]/.test(pw) && /[0-9]/.test(pw)
   );
 }
 
-export default function RegistratiPage() {
+function RegistratiInner() {
   const router = useRouter();
   const auth = useAuth();
+  const searchParams = useSearchParams();
+  const pianoIniziale = searchParams.get("piano") ?? "";
 
   const [nome, setNome] = useState("");
   const [cognome, setCognome] = useState("");
@@ -108,9 +112,22 @@ export default function RegistratiPage() {
     }
 
     if (!supabaseConfigured) {
-      // In modalità demo, simula successo
-      setSuccesso("auto");
-      setTimeout(() => router.push("/dashboard"), 1200);
+      // Demo mode: raccoglie email waitlist via Netlify Forms, poi va a /grazie
+      try {
+        await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            "form-name": "waitlist",
+            email: email.trim(),
+            piano: pianoIniziale || ruolo,
+            ruolo,
+          }).toString(),
+        });
+      } catch {
+        // Non blocare l'esperienza se Netlify Forms fallisce
+      }
+      router.push("/grazie");
       return;
     }
 
@@ -156,10 +173,15 @@ export default function RegistratiPage() {
               {successo === "verifica" ? "Controlla la tua email" : "Benvenuto in digITAle"}
             </h1>
             <p className="text-sm text-[#64748b] leading-relaxed mb-8">
-              {successo === "verifica"
-                ? <>Ti abbiamo inviato un link di conferma a <span className="font-semibold text-[#0f172a]">{email}</span>. Aprilo per completare la registrazione.</>
-                : <>Account creato con successo. Ti sto portando alla dashboard...</>
-              }
+              {successo === "verifica" ? (
+                <>
+                  Ti abbiamo inviato un link di conferma a{" "}
+                  <span className="font-semibold text-[#0f172a]">{email}</span>. Aprilo per completare la
+                  registrazione.
+                </>
+              ) : (
+                <>Account creato con successo. Ti sto portando alla dashboard...</>
+              )}
             </p>
             {successo === "verifica" && (
               <Link
@@ -169,9 +191,7 @@ export default function RegistratiPage() {
                 Torna all&apos;accesso <ArrowRight size={14} />
               </Link>
             )}
-            {successo === "auto" && (
-              <Loader2 size={20} className="animate-spin text-[#009246] mx-auto" />
-            )}
+            {successo === "auto" && <Loader2 size={20} className="animate-spin text-[#009246] mx-auto" />}
           </div>
         </div>
       </div>
@@ -190,20 +210,32 @@ export default function RegistratiPage() {
         <div className="bg-white rounded-3xl shadow-xl shadow-black/5 border border-gray-100 p-8 sm:p-10">
           {/* Logo */}
           <div className="flex justify-center mb-6">
-            <Link href="/"><BrandLogo size="lg" /></Link>
+            <Link href="/">
+              <BrandLogo size="lg" />
+            </Link>
           </div>
 
           {/* Title */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-[#0f172a] mb-2">Crea il tuo account</h1>
-            <p className="text-sm text-[#64748b]">Gratuito. Senza scadenza. Senza carta di credito.</p>
+            <h1 className="text-2xl font-bold text-[#0f172a] mb-2">
+              {supabaseConfigured ? "Crea il tuo account" : "Entra nella lista d'attesa"}
+            </h1>
+            <p className="text-sm text-[#64748b]">
+              {supabaseConfigured
+                ? "Gratuito. Senza scadenza. Senza carta di credito."
+                : "Gratuito. Sarai tra i primi ad accedere al lancio privato."}
+            </p>
           </div>
 
           {!supabaseConfigured && (
-            <div className="mb-6 flex items-start gap-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200">
-              <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-800 leading-relaxed">
-                <span className="font-semibold">Modalità anteprima.</span> Le registrazioni partiranno al lancio pubblico.
+            <div className="mb-6 flex items-start gap-3 p-3.5 rounded-xl bg-verde/10 border border-verde/20">
+              <CheckCircle2 size={16} className="text-verde shrink-0 mt-0.5" />
+              <p className="text-xs text-dark leading-relaxed">
+                <span className="font-semibold">Lancio privato in arrivo.</span> Compila il modulo per entrare
+                nella lista d&apos;attesa — ti avvisiamo per primi.
+                {pianoIniziale && (
+                  <span className="ml-1 font-semibold text-verde">Piano: {pianoIniziale}</span>
+                )}
               </p>
             </div>
           )}
@@ -219,22 +251,36 @@ export default function RegistratiPage() {
             {/* Nome + Cognome */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="nome" className="block text-sm font-medium text-[#0f172a] mb-2">Nome</label>
+                <label htmlFor="nome" className="block text-sm font-medium text-[#0f172a] mb-2">
+                  Nome
+                </label>
                 <div className="relative">
                   <UserIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94a3b8]" />
                   <input
-                    id="nome" type="text" autoComplete="given-name" required minLength={2}
-                    value={nome} onChange={(e) => setNome(e.target.value)}
+                    id="nome"
+                    type="text"
+                    autoComplete="given-name"
+                    required
+                    minLength={2}
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
                     placeholder="Mario"
                     className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#009246]/20 focus:border-[#009246]/40 transition-all"
                   />
                 </div>
               </div>
               <div>
-                <label htmlFor="cognome" className="block text-sm font-medium text-[#0f172a] mb-2">Cognome</label>
+                <label htmlFor="cognome" className="block text-sm font-medium text-[#0f172a] mb-2">
+                  Cognome
+                </label>
                 <input
-                  id="cognome" type="text" autoComplete="family-name" required minLength={2}
-                  value={cognome} onChange={(e) => setCognome(e.target.value)}
+                  id="cognome"
+                  type="text"
+                  autoComplete="family-name"
+                  required
+                  minLength={2}
+                  value={cognome}
+                  onChange={(e) => setCognome(e.target.value)}
                   placeholder="Rossi"
                   className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#009246]/20 focus:border-[#009246]/40 transition-all"
                 />
@@ -243,12 +289,18 @@ export default function RegistratiPage() {
 
             {/* Email */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#0f172a] mb-2">Email</label>
+              <label htmlFor="email" className="block text-sm font-medium text-[#0f172a] mb-2">
+                Email
+              </label>
               <div className="relative">
                 <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94a3b8]" />
                 <input
-                  id="email" type="email" autoComplete="email" required
-                  value={email} onChange={(e) => setEmail(e.target.value)}
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="mario.rossi@esempio.it"
                   className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#009246]/20 focus:border-[#009246]/40 transition-all"
                 />
@@ -257,23 +309,33 @@ export default function RegistratiPage() {
 
             {/* Password */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#0f172a] mb-2">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-[#0f172a] mb-2">
+                Password
+              </label>
               <div className="relative">
                 <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94a3b8]" />
                 <input
-                  id="password" type={showPassword ? "text" : "password"}
-                  autoComplete="new-password" required
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  required
                   minLength={PASSWORD_REQUIREMENTS.minLength}
-                  value={password} onChange={(e) => setPassword(e.target.value)}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="Almeno 8 caratteri, con maiuscole e numeri"
                   className="w-full pl-11 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm placeholder:text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#009246]/20 focus:border-[#009246]/40 transition-all"
                 />
                 <button
-                  type="button" onClick={() => setShowPassword((v) => !v)}
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? "Nascondi password" : "Mostra password"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
                 >
-                  {showPassword ? <EyeOff size={16} className="text-[#94a3b8]" /> : <Eye size={16} className="text-[#94a3b8]" />}
+                  {showPassword ? (
+                    <EyeOff size={16} className="text-[#94a3b8]" />
+                  ) : (
+                    <Eye size={16} className="text-[#94a3b8]" />
+                  )}
                 </button>
               </div>
               {password.length > 0 && (
@@ -289,7 +351,8 @@ export default function RegistratiPage() {
                     ))}
                   </div>
                   <p className={`text-xs ${pwValida ? "text-emerald-600" : "text-gray-500"}`}>
-                    {pwValida ? "✓ " : ""}{forza.label}
+                    {pwValida ? "✓ " : ""}
+                    {forza.label}
                   </p>
                 </div>
               )}
@@ -313,9 +376,14 @@ export default function RegistratiPage() {
                           : "border-gray-200 hover:border-gray-300 bg-white"
                       }`}
                     >
-                      <Icon size={16} className={`shrink-0 mt-0.5 ${attivo ? "text-[#009246]" : "text-gray-400"}`} />
+                      <Icon
+                        size={16}
+                        className={`shrink-0 mt-0.5 ${attivo ? "text-[#009246]" : "text-gray-400"}`}
+                      />
                       <div className="min-w-0">
-                        <p className={`text-xs font-semibold leading-tight ${attivo ? "text-[#0f172a]" : "text-gray-700"}`}>
+                        <p
+                          className={`text-xs font-semibold leading-tight ${attivo ? "text-[#0f172a]" : "text-gray-700"}`}
+                        >
                           {r.label}
                         </p>
                         <p className="text-[10px] text-gray-500 mt-0.5 leading-tight">{r.desc}</p>
@@ -330,34 +398,47 @@ export default function RegistratiPage() {
             <div className="space-y-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
               <div className="flex items-center gap-2 mb-1">
                 <Shield size={14} className="text-[#009246]" />
-                <span className="text-xs font-semibold text-[#0f172a] uppercase tracking-wider">I tuoi dati, le tue regole</span>
+                <span className="text-xs font-semibold text-[#0f172a] uppercase tracking-wider">
+                  I tuoi dati, le tue regole
+                </span>
               </div>
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
-                  type="checkbox" checked={consensoPrivacy}
+                  type="checkbox"
+                  checked={consensoPrivacy}
                   onChange={(e) => setConsensoPrivacy(e.target.checked)}
                   className="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#009246] focus:ring-[#009246]/30 shrink-0"
                 />
                 <span className="text-xs text-gray-700 leading-relaxed">
-                  Ho letto e accetto la <a href="#" className="font-semibold text-[#009246] hover:underline">Privacy Policy</a> <span className="text-red-600">*</span>
+                  Ho letto e accetto la{" "}
+                  <a href="#" className="font-semibold text-[#009246] hover:underline">
+                    Privacy Policy
+                  </a>{" "}
+                  <span className="text-red-600">*</span>
                 </span>
               </label>
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
-                  type="checkbox" checked={consensoTermini}
+                  type="checkbox"
+                  checked={consensoTermini}
                   onChange={(e) => setConsensoTermini(e.target.checked)}
                   className="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#009246] focus:ring-[#009246]/30 shrink-0"
                 />
                 <span className="text-xs text-gray-700 leading-relaxed">
-                  Ho letto e accetto i <a href="#" className="font-semibold text-[#009246] hover:underline">Termini di Servizio</a> <span className="text-red-600">*</span>
+                  Ho letto e accetto i{" "}
+                  <a href="#" className="font-semibold text-[#009246] hover:underline">
+                    Termini di Servizio
+                  </a>{" "}
+                  <span className="text-red-600">*</span>
                 </span>
               </label>
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
-                  type="checkbox" checked={consensoMarketing}
+                  type="checkbox"
+                  checked={consensoMarketing}
                   onChange={(e) => setConsensoMarketing(e.target.checked)}
                   className="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#009246] focus:ring-[#009246]/30 shrink-0"
                 />
@@ -368,7 +449,8 @@ export default function RegistratiPage() {
 
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
-                  type="checkbox" checked={consensoProfilazione}
+                  type="checkbox"
+                  checked={consensoProfilazione}
                   onChange={(e) => setConsensoProfilazione(e.target.checked)}
                   className="w-4 h-4 mt-0.5 rounded border-gray-300 text-[#009246] focus:ring-[#009246]/30 shrink-0"
                 />
@@ -378,7 +460,8 @@ export default function RegistratiPage() {
               </label>
 
               <p className="text-[10px] text-gray-500 leading-relaxed pt-1 border-t border-gray-200">
-                Puoi revocare ogni consenso quando vuoi dalle impostazioni. I tuoi dati non vengono venduti, mai.
+                Puoi revocare ogni consenso quando vuoi dalle impostazioni. I tuoi dati non vengono venduti,
+                mai.
               </p>
             </div>
 
@@ -395,7 +478,7 @@ export default function RegistratiPage() {
                 </>
               ) : (
                 <>
-                  Crea il mio account
+                  {supabaseConfigured ? "Crea il mio account" : "Mettimi in lista"}
                   <ArrowRight size={16} />
                 </>
               )}
@@ -405,7 +488,10 @@ export default function RegistratiPage() {
           {/* Login link */}
           <p className="text-center text-sm text-[#64748b] mt-6">
             Hai già un account?{" "}
-            <Link href="/accedi" className="font-semibold text-[#009246] hover:text-[#007a3a] transition-colors">
+            <Link
+              href="/accedi"
+              className="font-semibold text-[#009246] hover:text-[#007a3a] transition-colors"
+            >
               Accedi
             </Link>
           </p>
@@ -416,5 +502,13 @@ export default function RegistratiPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function RegistratiPage() {
+  return (
+    <Suspense>
+      <RegistratiInner />
+    </Suspense>
   );
 }

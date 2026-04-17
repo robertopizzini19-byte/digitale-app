@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import {
   Shield,
@@ -35,6 +35,71 @@ import {
 import { BrandLogo } from "@/components/BrandLogo";
 
 /* ================================================================== */
+/*  WAITLIST FORM — raccoglie email via Netlify Forms                  */
+/* ================================================================== */
+
+function WaitlistForm({ piano = "" }: { piano?: string }) {
+  const [email, setEmail] = useState("");
+  const [stato, setStato] = useState<"idle" | "invio" | "ok" | "errore">("idle");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.trim() || stato === "invio") return;
+    setStato("invio");
+
+    try {
+      await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          "form-name": "waitlist",
+          email: email.trim(),
+          piano,
+        }).toString(),
+      });
+      setStato("ok");
+    } catch {
+      setStato("errore");
+    }
+  }
+
+  if (stato === "ok") {
+    return (
+      <div className="max-w-md mx-auto flex items-center justify-center gap-3 p-5 rounded-2xl bg-verde/10 border border-verde/20">
+        <CheckCircle2 className="w-5 h-5 text-verde shrink-0" />
+        <p className="text-sm font-semibold text-dark">Sei dentro! Ti scrivo appena apriamo le porte.</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+      <input
+        ref={inputRef}
+        type="email"
+        name="email"
+        required
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="La tua email"
+        className="flex-1 px-5 py-4 rounded-2xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-verde/30 focus:border-verde transition-all"
+      />
+      <button
+        type="submit"
+        disabled={stato === "invio"}
+        className="btn-primary px-8 py-4 rounded-2xl text-base font-bold whitespace-nowrap disabled:opacity-70"
+      >
+        {stato === "invio" ? "Un attimo..." : "Sono dentro"}
+      </button>
+      {stato === "errore" && (
+        <p className="w-full text-xs text-rosso mt-1">Qualcosa è andato storto. Riprova tra un secondo.</p>
+      )}
+    </form>
+  );
+}
+
+/* ================================================================== */
 /*  NAVBAR                                                             */
 /* ================================================================== */
 
@@ -54,19 +119,34 @@ function Navbar() {
 
             {/* Desktop links */}
             <div className="hidden lg:flex items-center gap-9">
-              <a href="#manifesto" className="text-[15px] font-medium text-muted hover:text-dark transition-colors">
+              <a
+                href="#manifesto"
+                className="text-[15px] font-medium text-muted hover:text-dark transition-colors"
+              >
                 Manifesto
               </a>
-              <a href="#come-funziona" className="text-[15px] font-medium text-muted hover:text-dark transition-colors">
+              <a
+                href="#come-funziona"
+                className="text-[15px] font-medium text-muted hover:text-dark transition-colors"
+              >
                 Come Funziona
               </a>
-              <a href="#per-chi" className="text-[15px] font-medium text-muted hover:text-dark transition-colors">
+              <a
+                href="#per-chi"
+                className="text-[15px] font-medium text-muted hover:text-dark transition-colors"
+              >
                 Per Chi
               </a>
-              <a href="#prezzi" className="text-[15px] font-medium text-muted hover:text-dark transition-colors">
+              <a
+                href="#prezzi"
+                className="text-[15px] font-medium text-muted hover:text-dark transition-colors"
+              >
                 Prezzi
               </a>
-              <a href="#contatti" className="text-[15px] font-medium text-muted hover:text-dark transition-colors">
+              <a
+                href="#contatti"
+                className="text-[15px] font-medium text-muted hover:text-dark transition-colors"
+              >
                 Contatti
               </a>
             </div>
@@ -102,14 +182,54 @@ function Navbar() {
         {open && (
           <div className="lg:hidden border-t border-border/60 bg-white">
             <div className="flex flex-col px-5 py-4 gap-1">
-              <a href="#manifesto" onClick={() => setOpen(false)} className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Manifesto</a>
-              <a href="#come-funziona" onClick={() => setOpen(false)} className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Come Funziona</a>
-              <a href="#per-chi" onClick={() => setOpen(false)} className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Per Chi</a>
-              <a href="#prezzi" onClick={() => setOpen(false)} className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Prezzi</a>
-              <a href="#contatti" onClick={() => setOpen(false)} className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Contatti</a>
+              <a
+                href="#manifesto"
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors"
+              >
+                Manifesto
+              </a>
+              <a
+                href="#come-funziona"
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors"
+              >
+                Come Funziona
+              </a>
+              <a
+                href="#per-chi"
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors"
+              >
+                Per Chi
+              </a>
+              <a
+                href="#prezzi"
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors"
+              >
+                Prezzi
+              </a>
+              <a
+                href="#contatti"
+                onClick={() => setOpen(false)}
+                className="px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors"
+              >
+                Contatti
+              </a>
               <div className="mt-3 pt-3 border-t border-border/60 flex flex-col gap-2">
-                <Link href="/accedi" className="text-center px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors">Accedi</Link>
-                <Link href="/dashboard" className="btn-primary text-center px-4 py-3 rounded-xl text-[15px] font-semibold">Prova Gratis</Link>
+                <Link
+                  href="/accedi"
+                  className="text-center px-4 py-3 rounded-xl text-[15px] font-medium text-dark hover:bg-gray-50 transition-colors"
+                >
+                  Accedi
+                </Link>
+                <Link
+                  href="/dashboard"
+                  className="btn-primary text-center px-4 py-3 rounded-xl text-[15px] font-semibold"
+                >
+                  Prova Gratis
+                </Link>
               </div>
             </div>
           </div>
@@ -134,7 +254,8 @@ function Footer() {
               <BrandLogo variant="light" />
             </Link>
             <p className="text-sm text-gray-400 mt-3 leading-relaxed">
-              Lo standard digitale italiano.<br />
+              Lo standard digitale italiano.
+              <br />
               Semplice, onesto, sovrano.
             </p>
             <div className="flex items-center gap-1.5 mt-4">
@@ -148,11 +269,31 @@ function Footer() {
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Prodotto</h4>
             <ul className="space-y-2.5">
-              <li><a href="#manifesto" className="text-sm text-gray-300 hover:text-verde transition-colors">Manifesto</a></li>
-              <li><a href="#come-funziona" className="text-sm text-gray-300 hover:text-verde transition-colors">Come Funziona</a></li>
-              <li><a href="#prezzi" className="text-sm text-gray-300 hover:text-verde transition-colors">Prezzi</a></li>
-              <li><a href="#per-chi" className="text-sm text-gray-300 hover:text-verde transition-colors">Per Chi</a></li>
-              <li><Link href="/dashboard" className="text-sm text-gray-300 hover:text-verde transition-colors">Anteprima Dashboard</Link></li>
+              <li>
+                <a href="#manifesto" className="text-sm text-gray-300 hover:text-verde transition-colors">
+                  Manifesto
+                </a>
+              </li>
+              <li>
+                <a href="#come-funziona" className="text-sm text-gray-300 hover:text-verde transition-colors">
+                  Come Funziona
+                </a>
+              </li>
+              <li>
+                <a href="#prezzi" className="text-sm text-gray-300 hover:text-verde transition-colors">
+                  Prezzi
+                </a>
+              </li>
+              <li>
+                <a href="#per-chi" className="text-sm text-gray-300 hover:text-verde transition-colors">
+                  Per Chi
+                </a>
+              </li>
+              <li>
+                <Link href="/dashboard" className="text-sm text-gray-300 hover:text-verde transition-colors">
+                  Anteprima Dashboard
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -161,7 +302,9 @@ function Footer() {
             <ul className="space-y-2.5">
               <li className="text-sm text-gray-300">
                 <span className="block text-gray-500 text-xs mb-0.5">Scrivici</span>
-                <a href="mailto:ciao@digitale.it" className="hover:text-verde transition-colors">ciao@digitale.it</a>
+                <a href="mailto:ciao@digitale.it" className="hover:text-verde transition-colors">
+                  ciao@digitale.it
+                </a>
               </li>
               <li className="text-sm text-gray-300">
                 <span className="block text-gray-500 text-xs mb-0.5">Parlaci</span>
@@ -169,7 +312,9 @@ function Footer() {
               </li>
               <li className="text-sm text-gray-300">
                 <span className="block text-gray-500 text-xs mb-0.5">Lavora con noi</span>
-                <a href="mailto:team@digitale.it" className="hover:text-verde transition-colors">team@digitale.it</a>
+                <a href="mailto:team@digitale.it" className="hover:text-verde transition-colors">
+                  team@digitale.it
+                </a>
               </li>
             </ul>
           </div>
@@ -271,14 +416,46 @@ const STEPS = [
 ];
 
 const TARGETS = [
-  { icon: Briefcase, title: "Freelance e Professionisti", desc: "Fatture, clienti, scadenze e tasse in un unico posto." },
-  { icon: Building2, title: "Piccole e Medie Imprese", desc: "Gestione completa della tua impresa, senza complicazioni." },
-  { icon: Hammer, title: "Artigiani e Commercianti", desc: "Digitale semplice per chi lavora con le mani ogni giorno." },
-  { icon: Heart, title: "Famiglie e Cittadini", desc: "Bollette, documenti, scuola: tutto in un posto sicuro." },
-  { icon: Stethoscope, title: "Professionisti Sanitari", desc: "Pazienti, appuntamenti e referti senza burocrazia." },
-  { icon: Plane, title: "Italiani all'Estero", desc: "Resta connesso con l'Italia ovunque tu sia nel mondo." },
-  { icon: Landmark, title: "Comuni e Pubblica Amministrazione", desc: "Servizi digitali finalmente accessibili per ogni cittadino." },
-  { icon: GraduationCap, title: "Studenti e Università", desc: "Strumenti gratuiti per studiare, organizzarsi e crescere." },
+  {
+    icon: Briefcase,
+    title: "Freelance e Professionisti",
+    desc: "Fatture, clienti, scadenze e tasse in un unico posto.",
+  },
+  {
+    icon: Building2,
+    title: "Piccole e Medie Imprese",
+    desc: "Gestione completa della tua impresa, senza complicazioni.",
+  },
+  {
+    icon: Hammer,
+    title: "Artigiani e Commercianti",
+    desc: "Digitale semplice per chi lavora con le mani ogni giorno.",
+  },
+  {
+    icon: Heart,
+    title: "Famiglie e Cittadini",
+    desc: "Bollette, documenti, scuola: tutto in un posto sicuro.",
+  },
+  {
+    icon: Stethoscope,
+    title: "Professionisti Sanitari",
+    desc: "Pazienti, appuntamenti e referti senza burocrazia.",
+  },
+  {
+    icon: Plane,
+    title: "Italiani all'Estero",
+    desc: "Resta connesso con l'Italia ovunque tu sia nel mondo.",
+  },
+  {
+    icon: Landmark,
+    title: "Comuni e Pubblica Amministrazione",
+    desc: "Servizi digitali finalmente accessibili per ogni cittadino.",
+  },
+  {
+    icon: GraduationCap,
+    title: "Studenti e Università",
+    desc: "Strumenti gratuiti per studiare, organizzarsi e crescere.",
+  },
 ];
 
 const PLANS = [
@@ -295,7 +472,8 @@ const PLANS = [
       "Supporto comunità",
     ],
     highlighted: false,
-    cta: "Inizia Gratis",
+    cta: "Entra nella lista",
+    href: "/registrati?piano=gratuito",
   },
   {
     name: "Professionista",
@@ -311,7 +489,8 @@ const PLANS = [
       "Assistenza prioritaria 24/7",
     ],
     highlighted: true,
-    cta: "Scegli Professionista",
+    cta: "Voglio Professionista",
+    href: "/registrati?piano=professionista",
   },
   {
     name: "Impresa",
@@ -327,7 +506,8 @@ const PLANS = [
       "SLA garantito 99,9%",
     ],
     highlighted: false,
-    cta: "Contattaci",
+    cta: "Parlami del piano",
+    href: "#contatti",
   },
 ];
 
@@ -402,14 +582,14 @@ export default function Home() {
               </div>
 
               <h1 className="text-[2.75rem] sm:text-5xl lg:text-6xl xl:text-[4rem] font-extrabold text-dark leading-[1.05] tracking-tight mb-6">
-                Sei italiano.<br />
-                Meriti un digitale{" "}
-                <span className="text-gradient-italia">fatto per te</span>.
+                Sei italiano.
+                <br />
+                Meriti un digitale <span className="text-gradient-italia">fatto per te</span>.
               </h1>
 
               <p className="text-lg sm:text-xl text-muted leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0">
-                Fatture, tasse, SPID, PEC, documenti, scadenze.
-                Li gestisci parlando. In italiano. Come parli a un amico.
+                Fatture, tasse, SPID, PEC, documenti, scadenze. Li gestisci parlando. In italiano. Come parli
+                a un amico.
                 <br className="hidden sm:block" />
                 <span className="text-dark font-semibold">Anche se di tecnologia non capisci niente.</span>
               </p>
@@ -439,7 +619,8 @@ export default function Home() {
                   <div className="flex-1 bg-rosso" />
                 </div>
                 <p className="text-sm text-muted leading-snug">
-                  <span className="font-semibold text-dark">Fatto in Italia, per l&apos;Italia.</span><br />
+                  <span className="font-semibold text-dark">Fatto in Italia, per l&apos;Italia.</span>
+                  <br />
                   Dati sui server italiani. Codice verificabile.
                 </p>
               </div>
@@ -516,13 +697,15 @@ export default function Home() {
       <section id="problema" className="bg-white py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block text-sm font-bold tracking-widest uppercase text-rosso mb-4">Il Problema</span>
+            <span className="inline-block text-sm font-bold tracking-widest uppercase text-rosso mb-4">
+              Il Problema
+            </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark mb-5">
               Perché serve digITAle?
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-muted leading-relaxed">
-              L&apos;Italia è la terza economia dell&apos;Eurozona ma è 18esima nella digitalizzazione.
-              Non manca il talento. Manca l&apos;infrastruttura.
+              L&apos;Italia è la terza economia dell&apos;Eurozona ma è 18esima nella digitalizzazione. Non
+              manca il talento. Manca l&apos;infrastruttura.
             </p>
           </div>
 
@@ -556,15 +739,18 @@ export default function Home() {
 
         <div className="relative max-w-5xl mx-auto px-5 sm:px-8">
           <div className="text-center mb-20">
-            <span className="inline-block text-sm font-bold tracking-[0.25em] uppercase text-verde mb-5">Il Manifesto</span>
+            <span className="inline-block text-sm font-bold tracking-[0.25em] uppercase text-verde mb-5">
+              Il Manifesto
+            </span>
             <h2 className="text-3xl sm:text-4xl lg:text-[3.25rem] font-extrabold text-dark mb-6 leading-[1.1]">
-              Cinque promesse<br className="sm:hidden" />
+              Cinque promesse
+              <br className="sm:hidden" />
               <span className="hidden sm:inline"> </span>
               <span className="text-gradient-italia">che manterremo sempre</span>
             </h2>
             <p className="max-w-2xl mx-auto text-lg text-muted leading-relaxed">
-              Non sono regole di marketing. Sono i pilastri che definiscono chi siamo.
-              Se li rompiamo, non siamo più digITAle.
+              Non sono regole di marketing. Sono i pilastri che definiscono chi siamo. Se li rompiamo, non
+              siamo più digITAle.
             </p>
           </div>
 
@@ -585,12 +771,8 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0 pt-1">
-                  <h3 className="text-xl sm:text-2xl font-bold text-dark mb-2 leading-tight">
-                    {m.title}
-                  </h3>
-                  <p className="text-base text-muted leading-relaxed">
-                    {m.desc}
-                  </p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-dark mb-2 leading-tight">{m.title}</h3>
+                  <p className="text-base text-muted leading-relaxed">{m.desc}</p>
                 </div>
                 <div className="hidden sm:flex shrink-0 items-center justify-center w-10 h-10 rounded-full bg-gray-50 text-muted text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
                   {String(i + 1).padStart(2, "0")}
@@ -607,7 +789,9 @@ export default function Home() {
                 <div className="flex-1 bg-bianco border-y border-gray-200" />
                 <div className="flex-1 bg-rosso" />
               </div>
-              <span className="text-sm font-medium text-muted">Firmato dal team digITAle &middot; Italia, 2026</span>
+              <span className="text-sm font-medium text-muted">
+                Firmato dal team digITAle &middot; Italia, 2026
+              </span>
             </div>
           </div>
         </div>
@@ -617,7 +801,9 @@ export default function Home() {
       <section id="come-funziona" className="bg-gray-50 py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block text-sm font-bold tracking-widest uppercase text-verde mb-4">La Soluzione</span>
+            <span className="inline-block text-sm font-bold tracking-widest uppercase text-verde mb-4">
+              La Soluzione
+            </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark mb-5">
               Tre passaggi. La tua voce.
             </h2>
@@ -664,7 +850,9 @@ export default function Home() {
       <section className="bg-white py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block text-sm font-bold tracking-widest uppercase text-verde mb-4">Caratteristiche</span>
+            <span className="inline-block text-sm font-bold tracking-widest uppercase text-verde mb-4">
+              Caratteristiche
+            </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark mb-5">
               Costruito per semplificare
             </h2>
@@ -672,7 +860,10 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {FEATURES_GRID.map((f) => (
-              <div key={f.title} className="card-hover rounded-2xl border border-gray-100 p-6 sm:p-8 text-center">
+              <div
+                key={f.title}
+                className="card-hover rounded-2xl border border-gray-100 p-6 sm:p-8 text-center"
+              >
                 <div className="w-14 h-14 mx-auto rounded-2xl bg-verde/8 flex items-center justify-center mb-4">
                   <f.icon className="w-7 h-7 text-verde" />
                 </div>
@@ -720,7 +911,9 @@ export default function Home() {
       <section id="per-chi" className="bg-white py-24 md:py-32">
         <div className="max-w-6xl mx-auto px-5 sm:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block text-sm font-bold tracking-widest uppercase text-verde mb-4">Per Chi</span>
+            <span className="inline-block text-sm font-bold tracking-widest uppercase text-verde mb-4">
+              Per Chi
+            </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark mb-5">
               Per ogni italiano che lavora, studia, vive
             </h2>
@@ -731,7 +924,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {TARGETS.map((t) => (
-              <div key={t.title} className="group card-hover rounded-2xl border border-gray-100 bg-white p-6 text-center">
+              <div
+                key={t.title}
+                className="group card-hover rounded-2xl border border-gray-100 bg-white p-6 text-center"
+              >
                 <div className="w-14 h-14 mx-auto rounded-2xl bg-verde/8 flex items-center justify-center mb-4 group-hover:bg-verde group-hover:shadow-lg group-hover:shadow-verde/20 transition-all duration-300">
                   <t.icon className="w-7 h-7 text-verde group-hover:text-white transition-colors duration-300" />
                 </div>
@@ -747,7 +943,9 @@ export default function Home() {
       <section id="prezzi" className="bg-gray-50 py-24 md:py-32">
         <div className="max-w-5xl mx-auto px-5 sm:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block text-sm font-bold tracking-widest uppercase text-verde mb-4">Prezzi</span>
+            <span className="inline-block text-sm font-bold tracking-widest uppercase text-verde mb-4">
+              Prezzi
+            </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-dark mb-5">
               Onesti e trasparenti
             </h2>
@@ -793,15 +991,16 @@ export default function Home() {
                   ))}
                 </ul>
 
-                <button
-                  className={`w-full py-3.5 rounded-2xl font-semibold text-[15px] transition-all ${
+                <Link
+                  href={plan.href}
+                  className={`w-full block text-center py-3.5 rounded-2xl font-semibold text-[15px] transition-all ${
                     plan.highlighted
                       ? "btn-primary shadow-lg shadow-verde/20"
                       : "bg-gray-100 text-dark hover:bg-gray-200"
                   }`}
                 >
                   {plan.cta}
-                </button>
+                </Link>
               </div>
             ))}
           </div>
@@ -827,7 +1026,8 @@ export default function Home() {
               </div>
 
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-6">
-                Guarda digITAle<br />
+                Guarda digITAle
+                <br />
                 <span className="text-verde">in azione</span>
               </h2>
 
@@ -866,22 +1066,13 @@ export default function Home() {
             L&apos;Italia merita il suo standard digitale
           </h2>
           <p className="text-lg text-muted mb-10 max-w-lg mx-auto">
-            Unisciti a migliaia di italiani che credono in un digitale semplice, onesto e sovrano.
+            Entra nella lista d&apos;attesa. Sarai tra i primi ad accedere al lancio privato.
           </p>
 
-          <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
-            <input
-              type="email"
-              placeholder="La tua email"
-              className="flex-1 px-5 py-4 rounded-2xl border border-gray-200 text-base focus:outline-none focus:ring-2 focus:ring-verde/30 focus:border-verde transition-all"
-            />
-            <button className="btn-primary px-8 py-4 rounded-2xl text-base font-bold whitespace-nowrap">
-              Iscriviti
-            </button>
-          </div>
+          <WaitlistForm />
 
           <p className="text-xs text-muted mt-4">
-            Zero spam. Solo aggiornamenti importanti. Cancellati quando vuoi.
+            Zero spam. Solo il link d&apos;accesso quando apriremo. Cancellati quando vuoi.
           </p>
         </div>
       </section>
