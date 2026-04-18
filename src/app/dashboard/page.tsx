@@ -183,13 +183,8 @@ export default function DashboardPage() {
   const [voiceActive, setVoiceActive] = useState(false);
 
   const userId = auth.stato === "autenticato" ? auth.user.id : null;
-  const isDemo = auth.stato === "demo";
+  const isDemo = auth.stato === "demo" || auth.stato === "non_autenticato";
   const db = useDashboardData(isDemo ? null : userId);
-
-  // Guard: redirect a /accedi se Supabase è configurato ma non sei autenticato
-  useEffect(() => {
-    if (auth.stato === "non_autenticato") router.replace("/accedi");
-  }, [auth.stato, router]);
 
   // Derived: nome/cognome/piano dal DB utenti, con fallback demo
   const nome = auth.stato === "autenticato" ? auth.user.nome || "amico" : "Roberto";
@@ -232,9 +227,6 @@ export default function DashboardPage() {
       </div>
     );
   }
-
-  // Se non autenticato e Supabase è configurato, non renderizzare nulla (stiamo già facendo redirect)
-  if (auth.stato === "non_autenticato") return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex bg-[#f1f5f9]">
@@ -349,13 +341,25 @@ export default function DashboardPage() {
 
       {/* ───── MAIN AREA ───── */}
       <div className="flex-1 flex flex-col min-w-0">
-        {auth.stato === "demo" && (
+        {isDemo && (
           <div
             role="status"
             aria-live="polite"
-            className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs px-4 lg:px-8 py-2 text-center font-medium"
+            className="bg-amber-50 border-b border-amber-200 text-amber-900 text-xs px-4 lg:px-8 py-2.5 text-center font-medium flex items-center justify-center gap-4"
           >
-            🟡 MODALITÀ DEMO — Dati mostrati sono fittizi. Per dati reali connetti Supabase.
+            {auth.stato === "non_autenticato" ? (
+              <>
+                <span>Stai vedendo un&apos;anteprima con dati di esempio.</span>
+                <Link
+                  href="/registrati"
+                  className="inline-flex items-center gap-1 bg-[#009246] text-white px-3 py-1 rounded-lg text-[11px] font-bold hover:bg-[#007a3a] transition-colors"
+                >
+                  Registrati gratis →
+                </Link>
+              </>
+            ) : (
+              <span>🟡 MODALITÀ DEMO — Dati mostrati sono fittizi. Per dati reali connetti Supabase.</span>
+            )}
           </div>
         )}
         {/* ───── TOP BAR ───── */}
@@ -390,9 +394,11 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2 ml-auto">
             <button className="relative p-2.5 rounded-xl hover:bg-gray-100 transition-colors">
               <Bell size={20} className="text-gray-500" />
-              <span className="absolute top-1.5 right-1.5 w-[18px] h-[18px] bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
-                3
-              </span>
+              {isDemo && (
+                <span className="absolute top-1.5 right-1.5 w-[18px] h-[18px] bg-red-500 rounded-full text-[10px] font-bold text-white flex items-center justify-center ring-2 ring-white">
+                  3
+                </span>
+              )}
             </button>
 
             <button className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-gray-100 transition-colors">
