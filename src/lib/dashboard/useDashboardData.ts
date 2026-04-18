@@ -120,14 +120,12 @@ export function useDashboardData(userId: string | null): DashboardData {
           .eq("stato", "attiva")
           .gte("data_scadenza", now.toISOString().split("T")[0])
           .order("data_scadenza", { ascending: true })
-          .limit(3),
+          .limit(3)
+          .then((res) => (res.error?.code === "42P01" ? { data: [] } : res)),
         sb
           .from("fatture")
           .select(
-            `
-            id, stato, tipo, totale_centesimi, data_emissione, eliminato_il,
-            clienti!fatture_cliente_id_fkey (nome, cognome, ragione_sociale, tipo)
-          `,
+            "id, stato, tipo, totale_centesimi, data_emissione, clienti(nome, cognome, ragione_sociale, tipo)",
           )
           .eq("user_id", userId)
           .is("eliminato_il", null)

@@ -36,8 +36,8 @@ const NAV_ITEMS = [
 ];
 
 const NAV_BOTTOM = [
-  { label: "Aiuto", icon: HelpCircle },
-  { label: "Impostazioni", icon: Settings },
+  { label: "Aiuto", icon: HelpCircle, href: "/dashboard/aiuto" },
+  { label: "Impostazioni", icon: Settings, href: "/dashboard/impostazioni" },
 ];
 
 const PIANO_LABEL: Record<string, string> = {
@@ -177,14 +177,21 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </p>
           {NAV_BOTTOM.map((item) => {
             const Icon = item.icon;
+            const active = pathname.startsWith(item.href);
             return (
-              <div
+              <Link
                 key={item.label}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-gray-400 hover:bg-white/[0.04] hover:text-gray-200 transition-all cursor-pointer"
+                href={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all ${
+                  active
+                    ? "bg-white/[0.08] text-white"
+                    : "text-gray-400 hover:bg-white/[0.04] hover:text-gray-200"
+                }`}
               >
-                <Icon size={18} />
+                <Icon size={18} className={active ? "text-[#009246]" : ""} />
                 {item.label}
-              </div>
+              </Link>
             );
           })}
         </nav>

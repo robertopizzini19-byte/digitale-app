@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth/provider";
 import { getSupabase } from "@/lib/supabase/client";
+import Link from "next/link";
 import {
   FileText,
   Plus,
@@ -21,6 +22,7 @@ import {
   User,
   Building2,
   Pencil,
+  Eye,
 } from "lucide-react";
 
 /* ─── Types ─── */
@@ -564,6 +566,13 @@ function FattureContent() {
                           <Pencil size={13} />
                         </button>
                       )}
+                      <Link
+                        href={`/dashboard/fattura?id=${f.id}`}
+                        className="p-1.5 rounded-lg hover:bg-[#009246]/10 transition-colors text-gray-400 hover:text-[#009246]"
+                        title="Visualizza e stampa PDF"
+                      >
+                        <Eye size={13} />
+                      </Link>
                     </div>
                   </div>
                 </div>
