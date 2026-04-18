@@ -82,7 +82,7 @@ export function useDashboardData(userId: string | null): DashboardData {
         { data: fattMese },
         { data: fattPrec },
         { data: fattAttesa },
-        { data: clienti },
+        { count: clientiCount },
         { data: scadenze },
         { data: fattRecenti },
       ] = await Promise.all([
@@ -201,11 +201,11 @@ export function useDashboardData(userId: string | null): DashboardData {
         fatturatoMesePrecedente: fattPrecTotal,
         inAttesaCount: (fattAttesa ?? []).length,
         inAttesaImporto: attesaImporto,
-        clientiAttivi: clienti ?? 0,
+        clientiAttivi: clientiCount ?? 0,
         prossimaScadenza: prossima,
         fattureRecenti: recenti,
         scadenzeImminenti: scadImm,
-        isEmpty: recenti.length === 0 && (clienti ?? 0) === 0,
+        isEmpty: recenti.length === 0 && (clientiCount ?? 0) === 0,
         loading: false,
       });
     }

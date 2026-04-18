@@ -232,17 +232,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Invia email di benvenuto (best-effort, non blocca la registrazione)
       if (data.user?.id) {
-        const referralCode = await supabase
-          .from("utenti")
-          .select("referral_code")
-          .eq("id", data.user.id)
-          .maybeSingle()
-          .then((r) => (r.data as { referral_code?: string } | null)?.referral_code ?? null);
-
         fetch("/.netlify/functions/email-benvenuto", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ nome: payload.nome, email: payload.email, referral_code: referralCode }),
+          body: JSON.stringify({ nome: payload.nome, email: payload.email }),
         }).catch(() => undefined);
       }
 

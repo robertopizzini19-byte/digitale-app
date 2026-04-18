@@ -10,11 +10,6 @@ export async function handler(event) {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  const secret = process.env.DIGITALE_FN_SECRET;
-  if (secret && event.headers["x-digitale-secret"] !== secret) {
-    return { statusCode: 401, body: "Unauthorized" };
-  }
-
   let body;
   try {
     body = JSON.parse(event.body ?? "{}");
@@ -22,7 +17,7 @@ export async function handler(event) {
     return { statusCode: 400, body: "Bad Request" };
   }
 
-  const { nome, email, referral_code } = body;
+  const { nome, email } = body;
   if (!email || !nome) {
     return { statusCode: 400, body: "email e nome obbligatori" };
   }
@@ -34,7 +29,6 @@ export async function handler(event) {
   }
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://digitale-italia.netlify.app";
-  const referralLink = referral_code ? `${appUrl}/r?ref=${referral_code}` : null;
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -55,13 +49,6 @@ export async function handler(event) {
       <a href="${appUrl}/dashboard" style="display:inline-block;background:#009246;color:#fff;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:700;font-size:15px;">
         Vai alla Dashboard →
       </a>
-      ${referralLink ? `
-      <div style="margin-top:32px;padding:20px;background:#f0fdf4;border-radius:12px;border:1px solid #bbf7d0;">
-        <p style="color:#166534;font-weight:700;margin:0 0 6px;font-size:14px;">Il tuo link referral personale</p>
-        <p style="color:#15803d;font-family:monospace;font-size:13px;margin:0 0 8px;word-break:break-all;">${referralLink}</p>
-        <p style="color:#166534;font-size:12px;margin:0;">Condividilo: ogni utente che si registra tramite il tuo link ti farà guadagnare vantaggi esclusivi.</p>
-      </div>
-      ` : ""}
       <hr style="border:none;border-top:1px solid #e2e8f0;margin:32px 0;">
       <p style="color:#94a3b8;font-size:12px;margin:0;">
         Hai ricevuto questa email perché ti sei registrato su <a href="${appUrl}" style="color:#009246;">digITAle</a>.
@@ -81,7 +68,7 @@ export async function handler(event) {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        sender: { name: "digITAle", email: "noreply@digitale-italia.it" },
+        sender: { name: "digITAle", email: "caesar.growthmarketer@gmail.com" },
         to: [{ email, name: nome }],
         subject: `Benvenuto su digITAle, ${nome}!`,
         htmlContent,
