@@ -30,6 +30,8 @@ const ALLOWED_FILES = [
   /src\/lib\/utils\/formatting\.ts$/,
   /src\/lib\/utils\/validation\.ts$/,
   /tests\/.*\.(sql|ts|tsx|js|mjs)$/,
+  // Pagine dashboard con DEMO_DATA: CF fittizi come "BNCMRC80A01H501Z"
+  /src\/app\/dashboard\/.*\.tsx$/,
 ];
 
 const IGNORED_DIRS = ['node_modules', '.next', 'out', '.git', 'dist', 'build'];
