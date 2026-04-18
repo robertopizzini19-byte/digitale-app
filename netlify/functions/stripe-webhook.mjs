@@ -16,12 +16,17 @@ export async function handler(event) {
     return { statusCode: 503, body: "Config error" };
   }
 
-  const stripe = new Stripe(stripeKey, { apiVersion: "2024-12-18.acacia" });
+  const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
   const sig = event.headers["stripe-signature"];
+
+  // Netlify può codificare il body in base64 per payload binari
+  const rawBody = event.isBase64Encoded
+    ? Buffer.from(event.body, "base64").toString("utf8")
+    : event.body;
 
   let stripeEvent;
   try {
-    stripeEvent = stripe.webhooks.constructEvent(event.body, sig, webhookSecret);
+    stripeEvent = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
@@ -29,46 +34,65 @@ export async function handler(event) {
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-  if (stripeEvent.type === "checkout.session.completed") {
-    const session = stripeEvent.data.object;
-    const userId = session.metadata?.user_id;
-    const piano = session.metadata?.piano;
+  switch (stripeEvent.type) {
+    case "checkout.session.completed": {
+      const session = stripeEvent.data.object;
+      const userId = session.metadata?.user_id;
+      const piano = session.metadata?.piano;
 
-    if (userId && piano) {
-      const { error } = await supabase
-        .from("utenti")
-        .update({
-          piano,
-          stripe_customer_id: session.customer ?? null,
-        })
-        .eq("id", userId);
+      if (userId && piano) {
+        const { error } = await supabase
+          .from("utenti")
+          .update({ piano, stripe_customer_id: session.customer ?? null })
+          .eq("id", userId);
 
-      if (error) {
-        console.error("Supabase update failed:", error);
-        return { statusCode: 500, body: "DB update failed" };
+        if (error) {
+          console.error("Supabase update piano failed:", error);
+          return { statusCode: 500, body: "DB update failed" };
+        }
+        console.log(`Piano aggiornato: user=${userId} piano=${piano}`);
       }
-
-      console.log(`Piano aggiornato: user=${userId} piano=${piano}`);
+      break;
     }
+
+    case "customer.subscription.updated": {
+      const sub = stripeEvent.data.object;
+      if (sub.status === "active" && sub.metadata?.piano) {
+        await supabase
+          .from("utenti")
+          .update({ piano: sub.metadata.piano })
+          .eq("stripe_customer_id", sub.customer);
+      }
+      break;
+    }
+
+    case "customer.subscription.deleted": {
+      const sub = stripeEvent.data.object;
+      if (sub.customer) {
+        const { error } = await supabase
+          .from("utenti")
+          .update({ piano: "gratuito" })
+          .eq("stripe_customer_id", sub.customer);
+
+        if (error) console.error("Supabase downgrade failed:", error);
+        else console.log(`Downgrade a gratuito: customer=${sub.customer}`);
+      }
+      break;
+    }
+
+    case "invoice.payment_failed": {
+      const inv = stripeEvent.data.object;
+      console.warn(`Pagamento fallito: customer=${inv.customer} amount=${inv.amount_due}`);
+      break;
+    }
+
+    default:
+      break;
   }
 
-  if (stripeEvent.type === "customer.subscription.deleted") {
-    const sub = stripeEvent.data.object;
-    const customerId = sub.customer;
-
-    if (customerId) {
-      const { error } = await supabase
-        .from("utenti")
-        .update({ piano: "gratuito" })
-        .eq("stripe_customer_id", customerId);
-
-      if (error) {
-        console.error("Supabase downgrade failed:", error);
-      } else {
-        console.log(`Piano downgrade a gratuito: customer=${customerId}`);
-      }
-    }
-  }
-
-  return { statusCode: 200, body: JSON.stringify({ received: true }) };
+  return {
+    statusCode: 200,
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ received: true }),
+  };
 }

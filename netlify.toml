@@ -71,7 +71,7 @@
     # - img-src: self + data: (inline SVG) + blob: (avatar upload) + https: (Gravatar/similari)
     # - font-src: self + Google Fonts (usiamo Inter via next/font, che inline)
     # - frame-ancestors none: no iframe embedding di digITAle
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in https://*.ingest.eu.sentry.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.supabase.in https://*.ingest.eu.sentry.io https://api.stripe.com; frame-src https://js.stripe.com https://hooks.stripe.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; object-src 'none'; upgrade-insecure-requests"
 
 # Staging / preview: X-Robots-Tag noindex + basic auth via Netlify UI
 [[context.staging.headers]]

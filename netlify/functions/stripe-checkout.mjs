@@ -31,7 +31,7 @@ export async function handler(event) {
     return { statusCode: 400, body: JSON.stringify({ error: `Piano non riconosciuto: ${piano}` }) };
   }
 
-  const stripe = new Stripe(stripeKey, { apiVersion: "2024-12-18.acacia" });
+  const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
 
   try {
     const session = await stripe.checkout.sessions.create({

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth/provider";
 import { useDashboardData } from "@/lib/dashboard/useDashboardData";
@@ -128,9 +129,45 @@ function todayIT(): string {
   return `${giorni[d.getDay()]} ${d.getDate()} ${mesi[d.getMonth()]} ${d.getFullYear()}`;
 }
 
+/* ─────────────────────── UPGRADE BANNER ─────────────────────── */
+
+function UpgradeBanner() {
+  const searchParams = useSearchParams();
+  const piano = searchParams.get("piano");
+  const [visible, setVisible] = useState(() => searchParams.get("upgrade") === "ok");
+
+  useEffect(() => {
+    if (!visible) return;
+    const t = setTimeout(() => setVisible(false), 6000);
+    return () => clearTimeout(t);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!visible) return null;
+  return (
+    <div className="bg-gradient-to-r from-[#009246] to-[#007a3a] text-white px-4 py-3 rounded-2xl flex items-center justify-between gap-4 shadow-lg shadow-[#009246]/20">
+      <div className="flex items-center gap-3">
+        <span className="text-2xl">🎉</span>
+        <div>
+          <p className="font-bold text-sm">Piano aggiornato con successo!</p>
+          <p className="text-xs text-white/80">
+            Benvenuto nel piano {piano === "impresa" ? "Impresa" : "Professionista"} — tutte le funzioni sono
+            attive.
+          </p>
+        </div>
+      </div>
+      <button
+        onClick={() => setVisible(false)}
+        className="text-white/70 hover:text-white text-lg leading-none"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
 /* ─────────────────────── PAGE ─────────────────────── */
 
-export default function DashboardPage() {
+function DashboardContent() {
   const auth = useAuth();
   const [voiceActive, setVoiceActive] = useState(false);
 
@@ -159,6 +196,11 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-[1400px] mx-auto px-4 lg:px-8 py-6 lg:py-8 space-y-6 lg:space-y-8">
+      {/* ─── UPGRADE SUCCESS BANNER ─── */}
+      <Suspense fallback={null}>
+        <UpgradeBanner />
+      </Suspense>
+
       {/* ─── WELCOME + VOICE ─── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -612,5 +654,13 @@ export default function DashboardPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={null}>
+      <DashboardContent />
+    </Suspense>
   );
 }
