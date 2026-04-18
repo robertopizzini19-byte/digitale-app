@@ -82,6 +82,19 @@ function RegistratiInner() {
   const [consensoMarketing, setConsensoMarketing] = useState(false);
   const [consensoProfilazione, setConsensoProfilazione] = useState(false);
 
+  const [codiceReferral] = useState<string | undefined>(() => {
+    try {
+      if (typeof window === "undefined") return undefined;
+      const saved = localStorage.getItem("digitale_referral");
+      if (saved) {
+        localStorage.removeItem("digitale_referral");
+        return saved;
+      }
+    } catch {
+      // localStorage non disponibile
+    }
+    return undefined;
+  });
   const [invio, setInvio] = useState(false);
   const [errore, setErrore] = useState<string | null>(null);
   const [successo, setSuccesso] = useState<"verifica" | "auto" | null>(null);
@@ -138,6 +151,7 @@ function RegistratiInner() {
       nome: nome.trim(),
       cognome: cognome.trim(),
       ruolo,
+      codiceReferral,
       consensi: {
         privacy: true,
         termini: true,

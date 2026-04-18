@@ -10,15 +10,7 @@
  * nessuna auth reale, /dashboard accessibile come anteprima.
  */
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
 import { getSupabase, supabaseConfigured } from "../supabase/client";
 import type { User, UserRole } from "../core/types";
@@ -78,7 +70,9 @@ export type AuthStato =
 
 export interface AuthActions {
   accedi: (email: string, password: string) => Promise<{ ok: true } | { ok: false; messaggio: string }>;
-  registra: (payload: RegistraPayload) => Promise<{ ok: true; richiedeVerifica: boolean } | { ok: false; messaggio: string }>;
+  registra: (
+    payload: RegistraPayload,
+  ) => Promise<{ ok: true; richiedeVerifica: boolean } | { ok: false; messaggio: string }>;
   esci: () => Promise<void>;
   aggiornaProfilo: (patch: Partial<UtenteRow>) => Promise<{ ok: true } | { ok: false; messaggio: string }>;
   richiediReset: (email: string) => Promise<{ ok: true } | { ok: false; messaggio: string }>;
@@ -90,6 +84,7 @@ export interface RegistraPayload {
   nome: string;
   cognome: string;
   ruolo: UserRole;
+  codiceReferral?: string;
   consensi: {
     privacy: true;
     termini: true;
@@ -107,20 +102,19 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const supabase = useMemo(() => getSupabase(), []);
   const [stato, setStato] = useState<AuthStato>(
-    supabaseConfigured ? { stato: "caricamento" } : { stato: "demo" }
+    supabaseConfigured ? { stato: "caricamento" } : { stato: "demo" },
   );
 
   /* Carica profilo utente dalla tabella utenti */
-  const caricaProfilo = useCallback(async (sb: NonNullable<typeof supabase>, sessione: Session): Promise<User | null> => {
-    const { data, error } = await sb
-      .from("utenti")
-      .select("*")
-      .eq("id", sessione.user.id)
-      .maybeSingle();
+  const caricaProfilo = useCallback(
+    async (sb: NonNullable<typeof supabase>, sessione: Session): Promise<User | null> => {
+      const { data, error } = await sb.from("utenti").select("*").eq("id", sessione.user.id).maybeSingle();
 
-    if (error || !data) return fallbackUser(sessione.user);
-    return rowToUser(data as UtenteRow);
-  }, []);
+      if (error || !data) return fallbackUser(sessione.user);
+      return rowToUser(data as UtenteRow);
+    },
+    [],
+  );
 
   /* Init: recupera sessione corrente + subscribe a cambi */
   useEffect(() => {
@@ -134,9 +128,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (data.session) {
         const user = await caricaProfilo(supabase, data.session);
         if (!annullato) {
-          setStato(user
-            ? { stato: "autenticato", user, sessione: data.session }
-            : { stato: "non_autenticato" }
+          setStato(
+            user ? { stato: "autenticato", user, sessione: data.session } : { stato: "non_autenticato" },
           );
         }
       } else {
@@ -150,10 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
       const user = await caricaProfilo(supabase, sessione);
-      setStato(user
-        ? { stato: "autenticato", user, sessione }
-        : { stato: "non_autenticato" }
-      );
+      setStato(user ? { stato: "autenticato", user, sessione } : { stato: "non_autenticato" });
     });
 
     return () => {
@@ -164,74 +154,131 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /* ─── Azioni ─── */
 
-  const accedi = useCallback<AuthActions["accedi"]>(async (email, password) => {
-    if (!supabase) return { ok: false, messaggio: "Supabase non configurato" };
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) return { ok: false, messaggio: mapErrore(error.message) };
-    return { ok: true };
-  }, [supabase]);
+  const accedi = useCallback<AuthActions["accedi"]>(
+    async (email, password) => {
+      if (!supabase) return { ok: false, messaggio: "Supabase non configurato" };
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) return { ok: false, messaggio: mapErrore(error.message) };
+      return { ok: true };
+    },
+    [supabase],
+  );
 
-  const registra = useCallback<AuthActions["registra"]>(async (payload) => {
-    if (!supabase) return { ok: false, messaggio: "Supabase non configurato" };
+  const registra = useCallback<AuthActions["registra"]>(
+    async (payload) => {
+      if (!supabase) return { ok: false, messaggio: "Supabase non configurato" };
 
-    const { data, error } = await supabase.auth.signUp({
-      email: payload.email,
-      password: payload.password,
-      options: {
-        data: {
-          nome: payload.nome,
-          cognome: payload.cognome,
-          ruolo: payload.ruolo,
+      const { data, error } = await supabase.auth.signUp({
+        email: payload.email,
+        password: payload.password,
+        options: {
+          data: {
+            nome: payload.nome,
+            cognome: payload.cognome,
+            ruolo: payload.ruolo,
+            ...(payload.codiceReferral ? { referred_by_code: payload.codiceReferral } : {}),
+          },
+          emailRedirectTo: typeof window !== "undefined" ? `${window.location.origin}/accedi` : undefined,
         },
-        emailRedirectTo: typeof window !== "undefined" ? `${window.location.origin}/accedi` : undefined,
-      },
-    });
+      });
 
-    if (error) return { ok: false, messaggio: mapErrore(error.message) };
+      if (error) return { ok: false, messaggio: mapErrore(error.message) };
 
-    // Log consensi GDPR (best-effort: se la policy RLS richiede sessione valida
-    // e l'utente è in verifica email, il log verrà ritentato al primo login).
-    const userId = data.user?.id;
-    if (userId) {
-      const ua = typeof navigator !== "undefined" ? navigator.userAgent : "unknown";
-      const consensiRows = [
-        { user_id: userId, tipo: "privacy_policy", accettato: true, versione: "1.0", user_agent: ua, metodo: "click" as const },
-        { user_id: userId, tipo: "termini_servizio", accettato: true, versione: "1.0", user_agent: ua, metodo: "click" as const },
-      ];
-      if (payload.consensi.marketing) {
-        consensiRows.push({ user_id: userId, tipo: "marketing", accettato: true, versione: "1.0", user_agent: ua, metodo: "click" });
+      // Log consensi GDPR (best-effort: se la policy RLS richiede sessione valida
+      // e l'utente è in verifica email, il log verrà ritentato al primo login).
+      const userId = data.user?.id;
+      if (userId) {
+        const ua = typeof navigator !== "undefined" ? navigator.userAgent : "unknown";
+        const consensiRows = [
+          {
+            user_id: userId,
+            tipo: "privacy_policy",
+            accettato: true,
+            versione: "1.0",
+            user_agent: ua,
+            metodo: "click" as const,
+          },
+          {
+            user_id: userId,
+            tipo: "termini_servizio",
+            accettato: true,
+            versione: "1.0",
+            user_agent: ua,
+            metodo: "click" as const,
+          },
+        ];
+        if (payload.consensi.marketing) {
+          consensiRows.push({
+            user_id: userId,
+            tipo: "marketing",
+            accettato: true,
+            versione: "1.0",
+            user_agent: ua,
+            metodo: "click",
+          });
+        }
+        if (payload.consensi.profilazione) {
+          consensiRows.push({
+            user_id: userId,
+            tipo: "profilazione",
+            accettato: true,
+            versione: "1.0",
+            user_agent: ua,
+            metodo: "click",
+          });
+        }
+        await supabase.from("consensi").insert(consensiRows);
       }
-      if (payload.consensi.profilazione) {
-        consensiRows.push({ user_id: userId, tipo: "profilazione", accettato: true, versione: "1.0", user_agent: ua, metodo: "click" });
-      }
-      await supabase.from("consensi").insert(consensiRows);
-    }
 
-    const richiedeVerifica = !data.session;
-    return { ok: true, richiedeVerifica };
-  }, [supabase]);
+      // Invia email di benvenuto (best-effort, non blocca la registrazione)
+      if (data.user?.id) {
+        const referralCode = await supabase
+          .from("utenti")
+          .select("referral_code")
+          .eq("id", data.user.id)
+          .maybeSingle()
+          .then((r) => (r.data as { referral_code?: string } | null)?.referral_code ?? null);
+
+        fetch("/.netlify/functions/email-benvenuto", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ nome: payload.nome, email: payload.email, referral_code: referralCode }),
+        }).catch(() => undefined);
+      }
+
+      const richiedeVerifica = !data.session;
+      return { ok: true, richiedeVerifica };
+    },
+    [supabase],
+  );
 
   const esci = useCallback<AuthActions["esci"]>(async () => {
     if (!supabase) return;
     await supabase.auth.signOut();
   }, [supabase]);
 
-  const aggiornaProfilo = useCallback<AuthActions["aggiornaProfilo"]>(async (patch) => {
-    if (!supabase || stato.stato !== "autenticato") {
-      return { ok: false, messaggio: "Sessione non attiva" };
-    }
-    const { error } = await supabase.from("utenti").update(patch).eq("id", stato.user.id);
-    if (error) return { ok: false, messaggio: mapErrore(error.message) };
-    return { ok: true };
-  }, [supabase, stato]);
+  const aggiornaProfilo = useCallback<AuthActions["aggiornaProfilo"]>(
+    async (patch) => {
+      if (!supabase || stato.stato !== "autenticato") {
+        return { ok: false, messaggio: "Sessione non attiva" };
+      }
+      const { error } = await supabase.from("utenti").update(patch).eq("id", stato.user.id);
+      if (error) return { ok: false, messaggio: mapErrore(error.message) };
+      return { ok: true };
+    },
+    [supabase, stato],
+  );
 
-  const richiediReset = useCallback<AuthActions["richiediReset"]>(async (email) => {
-    if (!supabase) return { ok: false, messaggio: "Supabase non configurato" };
-    const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/accedi` : undefined;
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
-    if (error) return { ok: false, messaggio: mapErrore(error.message) };
-    return { ok: true };
-  }, [supabase]);
+  const richiediReset = useCallback<AuthActions["richiediReset"]>(
+    async (email) => {
+      if (!supabase) return { ok: false, messaggio: "Supabase non configurato" };
+      const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/accedi` : undefined;
+      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+      if (error) return { ok: false, messaggio: mapErrore(error.message) };
+      return { ok: true };
+    },
+    [supabase],
+  );
 
   const value: AuthContextValue = {
     ...stato,

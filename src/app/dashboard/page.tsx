@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth/provider";
 import { supabaseConfigured } from "@/lib/supabase/client";
+import { useDashboardData } from "@/lib/dashboard/useDashboardData";
 import {
   Search,
   Bell,
@@ -59,7 +60,7 @@ const NAV_BOTTOM = [
   { label: "Impostazioni", icon: Settings },
 ];
 
-const INVOICES = [
+const INVOICES_DEMO = [
   {
     cliente: "Marco Bianchi",
     azienda: "Studio Bianchi",
@@ -128,7 +129,7 @@ const STATO_CONFIG = {
   scaduta: { label: "Scaduta", icon: XCircle, bg: "bg-red-50", text: "text-red-700", dot: "bg-red-500" },
 };
 
-const CHART_DATA = [
+const CHART_DATA_DEMO = [
   { month: "Nov", value: 2800, height: "45%" },
   { month: "Dic", value: 3200, height: "52%" },
   { month: "Gen", value: 2600, height: "42%" },
@@ -137,7 +138,7 @@ const CHART_DATA = [
   { month: "Apr", value: 4250, height: "69%" },
 ];
 
-const UPCOMING = [
+const UPCOMING_DEMO = [
   { label: "IVA Trimestrale", date: "16 Mag 2026", type: "urgente" as const },
   { label: "F24 Contributi", date: "30 Mag 2026", type: "normale" as const },
   { label: "Rinnovo PEC", date: "15 Giu 2026", type: "info" as const },
@@ -181,6 +182,10 @@ export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceActive, setVoiceActive] = useState(false);
 
+  const userId = auth.stato === "autenticato" ? auth.user.id : null;
+  const isDemo = auth.stato === "demo";
+  const db = useDashboardData(isDemo ? null : userId);
+
   // Guard: redirect a /accedi se Supabase è configurato ma non sei autenticato
   useEffect(() => {
     if (auth.stato === "non_autenticato") router.replace("/accedi");
@@ -194,6 +199,20 @@ export default function DashboardPage() {
       ? (PIANO_LABEL[auth.user.piano] ?? "Piano Gratuito")
       : "Piano Professionista (demo)";
   const iniziali = `${nome[0] ?? "D"}${cognome[0] ?? ""}`.toUpperCase();
+
+  // Dati: reali se autenticato, demo se demo mode
+  const INVOICES = isDemo ? INVOICES_DEMO : db.fattureRecenti;
+  const UPCOMING = isDemo ? UPCOMING_DEMO : db.scadenzeImminenti;
+  const CHART_DATA = CHART_DATA_DEMO; // chart storico resta demo (serve aggregazione DB)
+
+  const statFatturato = isDemo ? 4250 : Math.round(db.fatturatoMese / 100);
+  const statFattPrecCents = db.fatturatoMesePrecedente;
+  const statAttesaCount = isDemo ? 3 : db.inAttesaCount;
+  const statAttesaImporto = isDemo
+    ? "€6.080"
+    : new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(db.inAttesaImporto / 100);
+  const statClienti = isDemo ? 18 : db.clientiAttivi;
+  const statProssima = isDemo ? { titolo: "IVA - 16 Mag", data: "Tra 30 giorni" } : db.prossimaScadenza;
 
   async function onLogout() {
     await auth.esci();
@@ -428,11 +447,22 @@ export default function DashboardPage() {
                     <TrendingUp size={18} className="text-emerald-600" />
                   </span>
                 </div>
-                <p className="text-3xl font-extrabold text-[#0f172a]">&euro;4.250</p>
+                <p className="text-3xl font-extrabold text-[#0f172a]">
+                  &euro;{statFatturato.toLocaleString("it-IT")}
+                </p>
                 <div className="flex items-center gap-1.5 mt-2">
-                  <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                    <ArrowUpRight size={12} /> +12%
-                  </span>
+                  {statFattPrecCents > 0 && !isDemo ? (
+                    <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                      <ArrowUpRight size={12} />
+                      {statFatturato > 0
+                        ? `+${Math.round(((db.fatturatoMese - statFattPrecCents) / statFattPrecCents) * 100)}%`
+                        : "0%"}
+                    </span>
+                  ) : isDemo ? (
+                    <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                      <ArrowUpRight size={12} /> +12%
+                    </span>
+                  ) : null}
                   <span className="text-xs text-gray-400">vs mese scorso</span>
                 </div>
               </div>
@@ -447,8 +477,8 @@ export default function DashboardPage() {
                     <Clock size={18} className="text-amber-600" />
                   </span>
                 </div>
-                <p className="text-3xl font-extrabold text-[#0f172a]">3</p>
-                <p className="text-xs text-gray-400 mt-2">&euro;6.080 in sospeso</p>
+                <p className="text-3xl font-extrabold text-[#0f172a]">{statAttesaCount}</p>
+                <p className="text-xs text-gray-400 mt-2">{statAttesaImporto} in sospeso</p>
               </div>
 
               {/* Clienti */}
@@ -461,12 +491,14 @@ export default function DashboardPage() {
                     <Users size={18} className="text-blue-600" />
                   </span>
                 </div>
-                <p className="text-3xl font-extrabold text-[#0f172a]">18</p>
+                <p className="text-3xl font-extrabold text-[#0f172a]">{statClienti}</p>
                 <div className="flex items-center gap-1.5 mt-2">
-                  <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
-                    <ArrowUpRight size={12} /> +2
-                  </span>
-                  <span className="text-xs text-gray-400">questo mese</span>
+                  {isDemo && (
+                    <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                      <ArrowUpRight size={12} /> +2
+                    </span>
+                  )}
+                  <span className="text-xs text-gray-400">attivi in totale</span>
                 </div>
               </div>
 
@@ -480,8 +512,17 @@ export default function DashboardPage() {
                     <Calendar size={18} className="text-red-600" />
                   </span>
                 </div>
-                <p className="text-2xl font-extrabold text-red-600">IVA - 16 Mag</p>
-                <p className="text-xs text-red-500 font-medium mt-2">Tra 30 giorni</p>
+                {statProssima ? (
+                  <>
+                    <p className="text-2xl font-extrabold text-red-600">{statProssima.titolo}</p>
+                    <p className="text-xs text-red-500 font-medium mt-2">{statProssima.data}</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-2xl font-extrabold text-gray-400">Nessuna</p>
+                    <p className="text-xs text-gray-400 font-medium mt-2">Nessuna scadenza imminente</p>
+                  </>
+                )}
               </div>
             </div>
 
@@ -586,113 +627,133 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
+                {/* Empty state */}
+                {!isDemo && db.isEmpty && !db.loading && (
+                  <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-[#009246]/10 flex items-center justify-center mb-4">
+                      <FileText size={28} className="text-[#009246]" />
+                    </div>
+                    <h3 className="text-base font-semibold text-[#0f172a] mb-2">Nessuna fattura ancora</h3>
+                    <p className="text-sm text-gray-500 max-w-xs">
+                      Crea la tua prima fattura con il pulsante verde in alto a sinistra.
+                    </p>
+                  </div>
+                )}
+
                 {/* Desktop table */}
-                <div className="hidden sm:block overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-gray-50/60">
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
-                          Cliente
-                        </th>
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
-                          Tipo
-                        </th>
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
-                          Importo
-                        </th>
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
-                          Data
-                        </th>
-                        <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
-                          Stato
-                        </th>
-                        <th className="text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
-                          Azioni
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-50">
-                      {INVOICES.map((inv, i) => {
-                        const stato = STATO_CONFIG[inv.stato];
-                        return (
-                          <tr key={i} className="hover:bg-gray-50/50 transition-colors cursor-pointer group">
-                            <td className="px-6 py-4">
-                              <p className="text-sm font-semibold text-[#0f172a]">{inv.cliente}</p>
-                              <p className="text-xs text-gray-400">{inv.azienda}</p>
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-500">{inv.tipo}</td>
-                            <td className="px-6 py-4 text-sm font-semibold text-[#0f172a] font-mono">
-                              {inv.importo}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-500">{inv.data}</td>
-                            <td className="px-6 py-4">
-                              <span
-                                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold ${stato.bg} ${stato.text}`}
-                              >
-                                <span className={`w-1.5 h-1.5 rounded-full ${stato.dot}`} />
-                                {stato.label}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 text-right">
-                              <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button
-                                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-                                  title="Visualizza"
+                {(isDemo || !db.isEmpty) && (
+                  <div className="hidden sm:block overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="bg-gray-50/60">
+                          <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                            Cliente
+                          </th>
+                          <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                            Tipo
+                          </th>
+                          <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                            Importo
+                          </th>
+                          <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                            Data
+                          </th>
+                          <th className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                            Stato
+                          </th>
+                          <th className="text-right text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                            Azioni
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {INVOICES.map((inv, i) => {
+                          const stato = STATO_CONFIG[inv.stato];
+                          return (
+                            <tr
+                              key={i}
+                              className="hover:bg-gray-50/50 transition-colors cursor-pointer group"
+                            >
+                              <td className="px-6 py-4">
+                                <p className="text-sm font-semibold text-[#0f172a]">{inv.cliente}</p>
+                                <p className="text-xs text-gray-400">{inv.azienda}</p>
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-500">{inv.tipo}</td>
+                              <td className="px-6 py-4 text-sm font-semibold text-[#0f172a] font-mono">
+                                {inv.importo}
+                              </td>
+                              <td className="px-6 py-4 text-sm text-gray-500">{inv.data}</td>
+                              <td className="px-6 py-4">
+                                <span
+                                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold ${stato.bg} ${stato.text}`}
                                 >
-                                  <Eye size={14} className="text-gray-400" />
-                                </button>
-                                <button
-                                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-                                  title="Scarica"
-                                >
-                                  <Download size={14} className="text-gray-400" />
-                                </button>
-                                <button
-                                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-                                  title="Altro"
-                                >
-                                  <MoreHorizontal size={14} className="text-gray-400" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                                  <span className={`w-1.5 h-1.5 rounded-full ${stato.dot}`} />
+                                  {stato.label}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 text-right">
+                                <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <button
+                                    className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                                    title="Visualizza"
+                                  >
+                                    <Eye size={14} className="text-gray-400" />
+                                  </button>
+                                  <button
+                                    className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                                    title="Scarica"
+                                  >
+                                    <Download size={14} className="text-gray-400" />
+                                  </button>
+                                  <button
+                                    className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                                    title="Altro"
+                                  >
+                                    <MoreHorizontal size={14} className="text-gray-400" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
 
                 {/* Mobile cards */}
-                <div className="sm:hidden divide-y divide-gray-100">
-                  {INVOICES.map((inv, i) => {
-                    const stato = STATO_CONFIG[inv.stato];
-                    return (
-                      <div key={i} className="px-5 py-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-[11px] font-bold text-gray-600">
-                            {inv.cliente
-                              .split(" ")
-                              .map((w) => w[0])
-                              .join("")}
+                {(isDemo || !db.isEmpty) && (
+                  <div className="sm:hidden divide-y divide-gray-100">
+                    {INVOICES.map((inv, i) => {
+                      const stato = STATO_CONFIG[inv.stato];
+                      return (
+                        <div key={i} className="px-5 py-4 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-[11px] font-bold text-gray-600">
+                              {inv.cliente
+                                .split(" ")
+                                .map((w) => w[0])
+                                .join("")}
+                            </div>
+                            <div>
+                              <p className="text-sm font-semibold text-[#0f172a]">{inv.cliente}</p>
+                              <p className="text-xs text-gray-400">{inv.data}</p>
+                            </div>
                           </div>
-                          <div>
-                            <p className="text-sm font-semibold text-[#0f172a]">{inv.cliente}</p>
-                            <p className="text-xs text-gray-400">{inv.data}</p>
+                          <div className="text-right">
+                            <p className="text-sm font-semibold text-[#0f172a] font-mono">{inv.importo}</p>
+                            <span
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold mt-1 ${stato.bg} ${stato.text}`}
+                            >
+                              <span className={`w-1 h-1 rounded-full ${stato.dot}`} />
+                              {stato.label}
+                            </span>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-semibold text-[#0f172a] font-mono">{inv.importo}</p>
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold mt-1 ${stato.bg} ${stato.text}`}
-                          >
-                            <span className={`w-1 h-1 rounded-full ${stato.dot}`} />
-                            {stato.label}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               {/* Voice Assistant */}

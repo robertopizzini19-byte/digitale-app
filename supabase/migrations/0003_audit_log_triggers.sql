@@ -49,16 +49,14 @@ begin
   end;
 
   insert into public.audit_log (
-    user_id, tabella, record_id, azione, dati_prima, dati_dopo, ip_origine, creato_il
+    user_id, risorsa, risorsa_id, azione, dettagli, ip
   ) values (
     uid,
     tg_table_name,
-    coalesce((dati_dopo->>'id')::uuid, (dati_prima->>'id')::uuid),
+    coalesce(dati_dopo->>'id', dati_prima->>'id'),
     azione,
-    dati_prima,
-    dati_dopo,
-    ip_origine,
-    now()
+    jsonb_build_object('prima', dati_prima, 'dopo', dati_dopo),
+    ip_origine
   );
 
   if tg_op = 'DELETE' then
@@ -110,8 +108,8 @@ create trigger audit_consensi
 revoke update, delete on public.audit_log from authenticated, anon;
 
 -- Retention: audit_log cresce linearmente. Aggiungiamo index per cleanup automatico dopo N anni.
-create index if not exists idx_audit_log_creato_il on public.audit_log(creato_il desc);
-create index if not exists idx_audit_log_tabella_record on public.audit_log(tabella, record_id);
+-- idx_audit_timestamp already created by 0001_init.sql
+create index if not exists idx_audit_log_risorsa_record on public.audit_log(risorsa, risorsa_id);
 create index if not exists idx_audit_log_user_id on public.audit_log(user_id) where user_id is not null;
 
 comment on function public.trigger_audit_log() is

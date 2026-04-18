@@ -6,9 +6,15 @@
   command = "npm run build"
   publish = "out"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--no-audit --no-fund"
+  # BREVO_API_KEY — setta in Netlify UI: Site > Environment variables
+  # DIGITALE_FN_SECRET — secret anti-spam per le Netlify Functions (genera random 32 char)
 
 # ============================================================================
 # CONTEXTS — ambienti separati: production / staging / deploy-preview / branch
